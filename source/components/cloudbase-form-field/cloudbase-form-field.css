@@ -1,0 +1,27 @@
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+
+  display: inline-block;
+  height: 44px;
+  margin-left: 5px;
+  padding: 0 0.6em 0 0.7em;
+  border-left: 1px solid #e5e5e5;
+  line-height: 44px;
+  vertical-align: middle;
+  font-size: 17px;
+}
+
+.btnNormal {
+  display: inline-block;
+  height: 44px;
+  margin-left: 5px;
+  padding: 0 0.6em 0 0.7em;
+  border-left: 1px solid #e5e5e5;
+  line-height: 44px;
+  vertical-align: middle;
+  font-size: 17px;
+  color: #3cc51f;
+}

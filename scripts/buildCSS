@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+function copy_css {
+  local dir=$(dirname $0)
+  local component=$(basename $dir)
+  local dist_css=$PWD/dist/css
+
+  # concatenate component CSS to main CSS file
+  mkdir -p $dist_css
+  cat $0 >> $dist_css/styles.css
+
+  # copy component CSS to component folder
+  mkdir -p $dist_css/$component/
+  cp $0 $dist_css/$component/
+}
+
+export -f copy_css
+
+function build {
+  find $PWD/source \
+    -name '*.css' \
+    -exec /bin/bash -c 'copy_css $0' {} \;
+}
+
+build
