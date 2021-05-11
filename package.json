@@ -34,12 +34,11 @@
     "clean:dist": "rm -rf dist",
     "clean:docs": "rm -rf docs",
     "lint": "eslint .",
-    "prepublishOnly": "run-p lint test && run-p build:js build:css",
+    "prepublishOnly": "run-p build:js build:css",
     "start": "run-s start:init start:run",
     "start:init": "run-s clean:dist build:js:esm build:css",
     "start:run": "run-p build:js:esm:watch build:css:watch storybook",
-    "storybook": "start-storybook -p 6006",
-    "test": "jest"
+    "storybook": "start-storybook -p 6006"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "5.3.19",
