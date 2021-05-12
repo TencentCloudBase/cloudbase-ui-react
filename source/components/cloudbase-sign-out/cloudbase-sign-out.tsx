@@ -1,37 +1,22 @@
-import React from "react"
-import { AuthState, AuthStateHandler } from "../../common/auth-type"
+import React from 'react'
+import { AuthState, AuthStateHandler, LOGINTYPE } from '../../common/auth-type'
 import {
-  dispatchToastHubEvent,
   dispatchAuthStateChangeEvent,
   handleSignOut
-} from "../../common/helper"
-import { Translations } from "../../common/Translations"
-import cloudbase from "@cloudbase/js-sdk"
-// import ReactWEUI from "react-weui"
-
-// const {
-//   Form,
-//   FormCell,
-//   Cell,
-//   CellBody,
-//   CellFooter,
-//   CellHeader,
-//   Label,
-//   Button,
-//   Input,
-//   Select,
-//   Page
-// } = ReactWEUI as any
+} from '../../common/helper'
+import { Translations } from '../../common/Translations'
+import cloudbase from '../../common/cloudbase'
 
 interface CloudbaseSignOutProps {
-  buttonText?: string
+  submitButtonText?: string
   handleAuthStateChange?: AuthStateHandler
   app: cloudbase.app.App
+  userLoginType?: LOGINTYPE
 }
 
 export class CloudbaseSignOut extends React.Component<CloudbaseSignOutProps> {
   static defaultProps = {
-    buttonText: Translations.SIGN_OUT
+    submitButtonText: Translations.SIGN_OUT
   }
 
   private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent
@@ -42,21 +27,16 @@ export class CloudbaseSignOut extends React.Component<CloudbaseSignOutProps> {
       this.props.handleAuthStateChange || this.defaultHandleAuthStateChange
     if (event) event.preventDefault()
 
-    try {
-      await handleSignOut(this.props.app)
-      handleAuthStateChange(this.eventBus, AuthState.SignedOut)
-    } catch (error) {
-      dispatchToastHubEvent(this.eventBus, error)
-    }
+    await handleSignOut(this.props.app, this.props.userLoginType as LOGINTYPE)
   }
 
   render() {
     return (
       <button
-        className="weui-btn weui-btn_primary"
+        className='weui-btn weui-btn_primary'
         onClick={(event: any) => this.signOut(event)}
       >
-        {this.props.buttonText}
+        {this.props.submitButtonText}
       </button>
     )
   }

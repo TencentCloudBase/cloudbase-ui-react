@@ -1,55 +1,49 @@
-import { AuthStateHandler, AuthState, PhoneNumberInterface, UsernameAlias, LOGINTYPE } from './auth-type'
-import { AUTH_STATE_CHANGE_EVENT, UI_AUTH_CHANNEL, TOAST_AUTH_ERROR_EVENT, PHONE_EMPTY_ERROR_MESSAGE, COUNTRY_DIAL_CODE_SUFFIX, PHONE_SUFFIX } from './constant'
-import cloudbase from '@cloudbase/js-sdk'
-import { Translations } from "./Translations"
-
+import { AuthStateHandler, AuthState, LOGINTYPE, OAuthConfig, EVENT_TYPE } from './auth-type'
+import { AUTH_STATE_CHANGE_EVENT, UI_AUTH_CHANNEL, TOAST_AUTH_ERROR_EVENT } from './constant'
+import cloudbase from './cloudbase'
 
 export const onAuthUIStateChange = (app: cloudbase.app.App, authStateHandler: AuthStateHandler) => {
-    //
-    console.log('flag')
     const authUIStateHandler = (data: any) => {
         console.log('data', data)
-        const { data: payload } = data;
+        const { data: payload } = data
         console.log('payload', payload)
         switch (payload.event) {
             case AUTH_STATE_CHANGE_EVENT:
                 if (payload.message) {
                     if (payload.message === AuthState.SignedIn) {
-                        // for AuthState.SignedIn, use an Auth Guard
                         try {
-                            // const user = await Auth.currentAuthenticatedUser();
-                            const user = app.auth({ persistence: "local" }).currentUser // TODO: use config
-                            console.log('gggggg', payload.message, user)
-                            authStateHandler(payload.message as AuthState, user);
+                            const user = app.auth({ persistence: 'local' }).currentUser // TODO: use config
+                            authStateHandler(payload.message as AuthState, user)
                         } catch (e) {
                         }
                     } else {
-                        authStateHandler(payload.message as AuthState, payload.data);
+                        authStateHandler(payload.message as AuthState, payload.data)
                     }
                 }
-                break;
+                break
         }
-    };
+    }
 
     const eventBus = (app as any).eventBus
     eventBus.on(UI_AUTH_CHANNEL, authUIStateHandler);
     return () => eventBus.off(UI_AUTH_CHANNEL, authUIStateHandler);
-};
-
-export interface ToastError {
-    code?: string;
-    message: string;
 }
 
-export const dispatchToastHubEvent = (eventBus: any, error: ToastError) => {
+export interface ToastEvent {
+    code?: string;
+    message: string;
+    type: string
+}
+
+export const dispatchToastHubEvent = (eventBus: any, eventItem: ToastEvent) => {
     eventBus.fire(UI_AUTH_CHANNEL, {
-        event: TOAST_AUTH_ERROR_EVENT,
-        message: error.message
+        event: eventItem.type,
+        code: eventItem.code,
+        message: eventItem.message
     });
 };
 
 export const dispatchAuthStateChangeEvent = (eventBus: any, nextAuthState: AuthState, data?: object | null) => {
-    console.log('dispatch an event')
     eventBus.fire(UI_AUTH_CHANNEL, {
         event: AUTH_STATE_CHANGE_EVENT,
         message: nextAuthState,
@@ -57,65 +51,26 @@ export const dispatchAuthStateChangeEvent = (eventBus: any, nextAuthState: AuthS
     });
 };
 
-// export const composePhoneNumberInput = (phoneNumber: PhoneNumberInterface) => {
-//     console.log('((())))')
-//     if (!phoneNumber.phoneNumberValue) {
-//         throw new Error(PHONE_EMPTY_ERROR_MESSAGE);
-//     }
-
-//     const sanitizedPhoneNumberValue = phoneNumber.phoneNumberValue.replace(/[-()\s]/g, '');
-
-//     return `${phoneNumber.countryDialCodeValue}${sanitizedPhoneNumberValue}`;
-// };
-
-// export const checkUsernameAlias = (usernameAlias: any) => {
-//     if (!(usernameAlias in UsernameAlias)) {
-//         throw new Error(`Invalid username Alias - ${usernameAlias}. Instead use ${Object.values(UsernameAlias)}`);
-//     }
-// };
-
 export const checkUserLoginType = (loginType: LOGINTYPE) => {
-    if (!(loginType in LOGINTYPE)) {
+    const values = Object.values(LOGINTYPE)
+    if (values.indexOf(loginType) < 0) {
         throw new Error(`Invalid loginType - ${loginType}. Instead use ${Object.values(LOGINTYPE)}`);
     }
 };
 
-
-// export function handlePhoneNumberChange(event: any, phoneNumber: PhoneNumberInterface) {
-//     const name = event.target.name;
-//     const value = event.target.value;
-
-//     console.log('phone change name value', name,)
-
-//     /** Cognito expects to have a string be passed when signing up. Since the Select input is separate
-//      * input from the phone number input, we need to first capture both components values and combined
-//      * them together.
-//      */
-
-//     if (name === COUNTRY_DIAL_CODE_SUFFIX) {
-//         phoneNumber.countryDialCodeValue = value;
-//     }
-
-//     if (name === PHONE_SUFFIX) {
-//         phoneNumber.phoneNumberValue = value;
-//     }
-
-//     return
-// }
-
 interface ISignInParams {
     app: cloudbase.app.App
     loginType: LOGINTYPE
-    handleAuthStateChange: AuthStateHandler
-    username: string
-    password: string
-    code: string
-    isUsePassword: boolean
+    handleAuthStateChange?: AuthStateHandler
+    username?: string
+    password?: string
+    code?: string
+    isUsePassword?: boolean
+    oauthConfig?: OAuthConfig
 }
 
 export const handleSignIn = async (params: ISignInParams) => {
-    console.log('==+++++')
-    const { app, loginType, handleAuthStateChange, username, password, code, isUsePassword } = params
+    const { app, loginType, username = '', password = '', code, isUsePassword, oauthConfig } = params
     const eventBus = (app as any).eventBus
     const auth = app.auth({ persistence: 'local' })
     try {
@@ -136,49 +91,245 @@ export const handleSignIn = async (params: ISignInParams) => {
                 await auth.signInWithPhoneCodeOrPassword({
                     ...reqParams
                 })
-
-                const user = auth.currentUser
-                if (user) {
-                    dispatchAuthStateChangeEvent(
-                        (app as any).eventBus,
-                        AuthState.SignedIn,
-                        user
-                    )
-                }
-
             }; break
-            default: ; break
+            case LOGINTYPE.EMAIL: {
+                // let reqParams: any = {}
+                await auth.signInWithEmailAndPassword(username, password)
+            }; break
+            case LOGINTYPE.USERNAME: {
+                // let reqParams: any = {}
+                await auth.signInWithUsernameAndPassword(username, password)
+            }; break
+            case LOGINTYPE.WECHAT:
+            case LOGINTYPE.WECHAT_OPEN:
+            case LOGINTYPE.WECHAT_PUBLIC:
+                {
+                    const provider = auth.weixinAuthProvider(oauthConfig as OAuthConfig);
+                    const loginState = await provider.getRedirectResult()
+                    if (!loginState) {
+                        provider.signInWithRedirect();
+                    }
+                }
+            default: break
+        }
+
+        const user = auth.currentUser
+        if (user) {
+            dispatchToastHubEvent((app as any).eventBus, {
+                message: '登录成功',
+                type: EVENT_TYPE.TOAST_SUCCESS_MSG
+            })
+
+            dispatchAuthStateChangeEvent(
+                (app as any).eventBus,
+                AuthState.SignedIn,
+                user
+            )
         }
     } catch (error) {
-        if (error.code === 'UserNotConfirmedException') {
-            console.debug('the user is not confirmed');
-            handleAuthStateChange(AuthState.ConfirmSignUp, { username });
-        } else if (error.code === 'PasswordResetRequiredException') {
-            console.debug('the user requires a new password');
-            handleAuthStateChange(AuthState.ForgotPassword, { username });
-        } else if (error.code === 'InvalidParameterException' && password === '') {
-            console.debug('Password cannot be empty');
-            error.message = Translations.EMPTY_PASSWORD;
+        console.log('error.code', error.code)
+        console.log('error.message', error.message)
+        dispatchToastHubEvent(eventBus, {
+            code: error.code,
+            message: error.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT,
+        });
+    }
+};
+
+interface IForgotPassword {
+    app: cloudbase.app.App
+    loginType: LOGINTYPE
+    handleAuthStateChange: AuthStateHandler
+    username: string
+    oldPassword: string
+    newPassword: string
+    code: string
+}
+
+export const handleForgotPassword = async (params: IForgotPassword) => {
+    const { app, loginType, handleAuthStateChange, username, oldPassword, newPassword, code } = params
+    const eventBus = (app as any).eventBus
+    const auth = app.auth({ persistence: 'local' })
+    try {
+        switch (loginType) {
+            case LOGINTYPE.PHONE: {
+                let reqParams: any = {
+                    phoneNumber: username,
+                    phoneCode: code,
+                }
+                await auth.signInWithPhoneCodeOrPassword({
+                    ...reqParams
+                })
+            }; break
+            case LOGINTYPE.EMAIL: {
+                await auth.signInWithEmailAndPassword(
+                    username,
+                    oldPassword
+                )
+            }; break
+            case LOGINTYPE.USERNAME: {
+                // let reqParams: any = {}
+                await auth.signInWithUsernameAndPassword(username, oldPassword)
+            }; break
+            default: break
         }
-        dispatchToastHubEvent(eventBus, error);
+
+        const user = auth.currentUser
+        if (user) {
+            // 重置密码
+            const updateRes = await user.updatePassword(newPassword, oldPassword)
+
+            dispatchToastHubEvent((app as any).eventBus, {
+                message: '重置成功',
+                type: EVENT_TYPE.TOAST_SUCCESS_MSG
+            })
+
+            dispatchAuthStateChangeEvent(
+                (app as any).eventBus,
+                AuthState.SignIn,
+                user
+            )
+        }
+    } catch (error) {
+        console.log('error****', error)
+        dispatchToastHubEvent(eventBus, {
+            code: error.code,
+            message: error.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT,
+        });
     }
 };
 
 export const handleSignUp = async (app: cloudbase.app.App, loginType: LOGINTYPE, handleAuthStateChange: AuthStateHandler, username: string, password: string, code: string) => {
+    const eventBus = (app as any).eventBus
     const auth = app.auth({ persistence: 'local' })
-    switch (loginType) {
-        case LOGINTYPE.PHONE: await auth.signUpWithPhoneCode(
-            username,
-            code,
-            password
-        ); break
-        case LOGINTYPE.EMAIL: await auth.signUpWithEmailAndPassword(username, password); break
-        default: ; break
+    try {
+        switch (loginType) {
+            case LOGINTYPE.PHONE: await auth.signUpWithPhoneCode(
+                username,
+                code,
+                password
+            ); break
+            case LOGINTYPE.EMAIL: await auth.signUpWithEmailAndPassword(username, password); break
+            default: ; break
+        }
+
+        // 检查是否输入用户名，是则设置用户名
+        // 跳转至登录页
+        dispatchToastHubEvent((app as any).eventBus, {
+            message: '注册成功',
+            type: EVENT_TYPE.TOAST_SUCCESS_MSG
+        })
+        dispatchAuthStateChangeEvent((app as any).eventBus, AuthState.SignIn)
+    } catch (e) {
+        dispatchToastHubEvent(eventBus, {
+            code: e.code,
+            message: e.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
+        });
     }
 }
 
+export function removeParam(key: string, sourceURL: string) {
+    let rtn = sourceURL.split('?')[0];
+    let param;
+    let params_arr = [];
+    let queryString =
+        sourceURL.indexOf('?') !== -1 ? sourceURL.split('?')[1] : '';
+    if (queryString !== '') {
+        params_arr = queryString.split('&');
+        for (let i = params_arr.length - 1; i >= 0; i -= 1) {
+            param = params_arr[i].split('=')[0];
+            if (param === key) {
+                params_arr.splice(i, 1);
+            }
+        }
+        rtn = rtn + '?' + params_arr.join('&');
+    }
+    return rtn;
+};
 
-export const handleSignOut = async (app: cloudbase.app.App) => {
+export const handleSignOut = async (app: cloudbase.app.App, loginType: LOGINTYPE) => {
+    const eventBus = (app as any).eventBus
     const auth = app.auth({ persistence: 'local' })
-    await auth.signOut()
+
+    // 判断是否为微信授权登录后退出，是则重置url query
+    try {
+        await auth.signOut()
+        if (loginType.indexOf('WECHAT') > -1) {
+            const currUrl = removeParam('code', location.href);
+            location.href = currUrl
+        }
+        dispatchAuthStateChangeEvent((app as any).eventBus,
+            AuthState.SignedOut)
+
+    } catch (e) {
+        dispatchToastHubEvent(eventBus, {
+            code: e.code,
+            message: e.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
+        });
+    }
+
 }
+
+export const handleSendCode = async (app: cloudbase.app.App, phoneNumberValue: string) => {
+    const eventBus = (app as any).eventBus
+    const auth = app.auth({ persistence: 'local' })
+    try {
+        await auth.sendPhoneCode(phoneNumberValue)
+    } catch (e) {
+        dispatchToastHubEvent(eventBus, {
+            code: e.code,
+            message: e.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
+        });
+    }
+}
+
+export const handleUpdateUsername = async (app: cloudbase.app.App, username: string) => {
+    const eventBus = (app as any).eventBus
+    const auth = app.auth({ persistence: 'local' })
+
+    try {
+        if (!(await auth.isUsernameRegistered(username))) {
+            // 检查用户名是否绑定过
+            await auth.currentUser?.updateUsername(username); // 绑定用户名
+        }
+    } catch (error) {
+        dispatchToastHubEvent(eventBus, {
+            code: error.code,
+            message: error.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
+        });
+    }
+
+}
+
+export const checkWXOauthLoginCode = () => {
+    // 判断url中是否有code，有则直接调用登录
+    const code = getQuery('code') || getHash('code');
+    return code
+}
+
+export function getQuery(name: string, url?: string) {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+    // 参数：变量名，url为空则表从当前页面的url中取
+    let u = url || window.location.search;
+    let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+    let r = u.substr(u.indexOf('?') + 1).match(reg);
+    return r != null ? r[2] : '';
+};
+
+export const getHash = function (name: string) {
+    if (typeof window === 'undefined') {
+        return '';
+    }
+    const matches = window.location.hash.match(
+        new RegExp(`[#\?&\/]${name}=([^&#]*)`)
+    );
+    return matches ? matches[1] : '';
+};
