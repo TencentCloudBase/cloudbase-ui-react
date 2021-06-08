@@ -3,16 +3,16 @@ module.exports = {
     browser: true,
     es6: true,
     jest: true,
-    node: true,
+    node: true
   },
   extends: [
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
+    'plugin:jsx-a11y/recommended'
   ],
   parserOptions: {
     ecmaVersion: 2020,
-    sourceType: 'module',
+    sourceType: 'module'
   },
   parser: '@typescript-eslint/parser',
   plugins: ['jsx-a11y', 'react', 'react-hooks', '@typescript-eslint'],
@@ -26,7 +26,7 @@ module.exports = {
         code: 80,
         ignoreComments: true,
         ignoreTemplateLiterals: true,
-        ignoreStrings: true,
+        ignoreStrings: true
       }
     ],
     'no-trailing-spaces': 'error',
@@ -34,21 +34,21 @@ module.exports = {
     quotes: ['error', 'single', { allowTemplateLiterals: true }],
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
-    'react/prop-types': 'off',
-    semi: ['error', 'never'],
+    'react/prop-types': 'off'
+    // semi: ['error', 'never']
   },
   settings: {
     react: {
-      version: 'detect',
-    },
+      version: 'detect'
+    }
   },
   overrides: [
     {
       files: ['*.js', '*.jsx'],
       rules: {
         '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/no-var-requires': 'off',
-      },
-    },
-  ],
-}
+        '@typescript-eslint/no-var-requires': 'off'
+      }
+    }
+  ]
+};

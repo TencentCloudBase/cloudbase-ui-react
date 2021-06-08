@@ -29,7 +29,13 @@ export enum AuthState {
 export type AuthStateHandler = (nextAuthState: AuthState, data?: any) => void;
 
 export const EVENT_TYPE = {
-    TOAST_AUTH_ERROR_EVENT: 'TOAST_AUTH_ERROR_EVENT'
+    TOAST_AUTH_ERROR_EVENT: 'ToastAuthError',
+    TOAST_SUCCESS_MSG: 'ToastSuccessMsg'
+}
+
+export interface OAuthConfig {
+    appid: string
+    scope: "snsapi_base" | "snsapi_userinfo" | "snsapi_login"
 }
 
 export interface EVENTITEM {
@@ -46,7 +52,7 @@ export interface FormFieldType {
     required?: boolean;
     handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void;
     value?: string;
-    inputProps?: object;
+    inputProps?: any;
     disabled?: boolean;
     sendCode?: () => Promise<boolean>
 }
@@ -55,7 +61,7 @@ export interface PhoneFormFieldType extends FormFieldType {
     dialCode?: string;
 }
 
-export interface FormFieldTypes extends Array<FormFieldType> { }
+export type FormFieldTypes = Array<FormFieldType>
 
 export interface PhoneNumberInterface {
     countryDialCodeValue?: string;
@@ -69,3 +75,13 @@ export enum UsernameAlias {
 }
 
 export type UsernameAliasStrings = keyof typeof UsernameAlias;
+
+export type CodeDeliveryType = 'SMS';
+
+export interface ForgotPasswordAttributes {
+    userInput: string;
+    oldPassword: string;
+    newPassword: string;
+    code: string;
+}
+

@@ -5,11 +5,11 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '<rootDir>/source/@types',
-    'stories',
+    'stories'
   ],
   moduleNameMapper: {},
   preset: 'ts-jest',
   setupFilesAfterEnv: ['<rootDir>/testSetup.ts'],
   testPathIgnorePatterns: ['dist/', 'examples/'],
-  verbose: true,
-}
+  verbose: true
+};

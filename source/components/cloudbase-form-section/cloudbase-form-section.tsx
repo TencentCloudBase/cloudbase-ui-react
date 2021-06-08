@@ -1,20 +1,11 @@
-import React from "react"
-import { FormFieldType, FormFieldTypes } from "../../common/auth-type"
-import { CloudbaseFormField } from "../cloudbase-form-field/cloudbase-form-field"
-// import ReactWEUI from "react-weui"
-
-// const {
-//   Form,
-//   FormCell,
-//   CellBody,
-//   CellFooter,
-//   CellHeader,
-//   Label,
-//   Button,
-//   Input,
-//   Select,
-//   Page
-// } = ReactWEUI as any
+import React from 'react'
+import { FormFieldType, FormFieldTypes } from '../../common/auth-type'
+// import { CloudbaseFormField } from '../cloudbase-form-field/cloudbase-form-field'
+import { CloudbaseCodeField } from '../cloudbase-code-field/cloudbase-code-field'
+import { CloudbasePhoneField } from '../cloudbase-phone-field/cloudbase-phone-field'
+import { CloudbaseEmailField } from '../cloudbase-email-field/cloudbase-email-field'
+import { CloudbaseUsernameField } from '../cloudbase-username-field/cloudbase-username-field'
+import { CloudbasePasswordField } from '../cloudbase-password-field/cloudbase-password-field'
 
 interface CloudbaseFormSectionProps {
   submitButtonText: string
@@ -39,25 +30,87 @@ export class CloudbaseFormSection extends React.Component<CloudbaseFormSectionPr
     this.props.handleSubmit(ev.detail)
   }
 
-  private componentFieldMapping(
-    ff: FormFieldType,
-    index: number,
-    children?: React.ReactNode
-  ) {
-    return (
-      <CloudbaseFormField
-        fieldId={ff.fieldId}
-        key={index}
-        label={ff.label}
-        placeholder={ff.placeholder}
-        required={ff.required}
-        handleInputChange={ff.handleInputChange}
-        sendCode={ff.sendCode}
-        value={ff.value}
-        inputProps={ff.inputProps}
-        disabled={ff.disabled}
-      />
-    )
+  private componentFieldMapping(ff: FormFieldType, index: number) {
+    const { type } = ff
+    let fieldContent
+    switch (type) {
+      case 'phone_number':
+        fieldContent = (
+          <CloudbasePhoneField
+            key={index}
+            label={ff.label}
+            placeholder={ff.placeholder}
+            required={ff.required}
+            handleInputChange={ff.handleInputChange}
+            value={ff.value}
+            inputProps={ff.inputProps}
+            disabled={ff.disabled}
+          ></CloudbasePhoneField>
+        )
+        break
+      case 'username':
+        fieldContent = (
+          <CloudbaseUsernameField
+            key={index}
+            label={ff.label}
+            placeholder={ff.placeholder}
+            required={ff.required}
+            handleInputChange={ff.handleInputChange}
+            value={ff.value}
+            inputProps={ff.inputProps}
+            disabled={ff.disabled}
+          ></CloudbaseUsernameField>
+        )
+        break
+      case 'email':
+        fieldContent = (
+          <CloudbaseEmailField
+            key={index}
+            label={ff.label}
+            placeholder={ff.placeholder}
+            required={ff.required}
+            handleInputChange={ff.handleInputChange}
+            value={ff.value}
+            inputProps={ff.inputProps}
+            disabled={ff.disabled}
+          ></CloudbaseEmailField>
+        )
+        break
+      case 'code':
+        fieldContent = (
+          <CloudbaseCodeField
+            key={index}
+            label={ff.label}
+            placeholder={ff.placeholder}
+            required={ff.required}
+            handleInputChange={ff.handleInputChange}
+            value={ff.value}
+            inputProps={ff.inputProps}
+            disabled={ff.disabled}
+            sendCode={ff.sendCode}
+          ></CloudbaseCodeField>
+        )
+        break
+      case 'password':
+      case 'oldPassword':
+      case 'newPassword':
+        fieldContent = (
+          <CloudbasePasswordField
+            key={index}
+            label={ff.label}
+            placeholder={ff.placeholder}
+            required={ff.required}
+            handleInputChange={ff.handleInputChange}
+            value={ff.value}
+            inputProps={ff.inputProps}
+            disabled={ff.disabled}
+          ></CloudbasePasswordField>
+        )
+        break
+      default:
+        break
+    }
+    return fieldContent
   }
 
   private constructFormFieldOptions(formFields: FormFieldTypes) {
@@ -74,32 +127,35 @@ export class CloudbaseFormSection extends React.Component<CloudbaseFormSectionPr
 
   render() {
     return (
-      <div className="weui-cells weui-cells_form">
-        <div className="weui-cell">
-          <div className="weui-cell__bd">
-            <h3 className="header">{this.props.headerText}</h3>
+      <form onSubmit={this.props.handleSubmit}>
+        <div className='weui-cells weui-cells_form'>
+          <div className='weui-cell'>
+            <div className='weui-cell__bd'>
+              <h3 className='header'>{this.props.headerText}</h3>
+            </div>
           </div>
-        </div>
 
-        <div className="auth-fields">
-          {this.constructFormFieldOptions(this.props.formFields)}
-        </div>
-        <div className="weui-cell">
-          <div className="weui-cell__bd">
-            <button
-              className="weui-btn weui-btn_primary"
-              onClick={this.props.handleSubmit as any}
-            >
-              {this.props.loading ? (
-                <>loading</>
-              ) : (
-                <span>{this.props.submitButtonText}</span>
-              )}
-            </button>
+          <div className='auth-fields'>
+            {this.constructFormFieldOptions(this.props.formFields)}
           </div>
+          <div className='weui-cell'>
+            <div className='weui-cell__bd'>
+              <button
+                type='submit'
+                className='weui-btn weui-btn_primary'
+                // onClick={this.props.handleSubmit as any}
+              >
+                {this.props.loading ? (
+                  <>loading</>
+                ) : (
+                  <span>{this.props.submitButtonText}</span>
+                )}
+              </button>
+            </div>
+          </div>
+          {this.props.secondaryFooterContent}
         </div>
-        {this.props.secondaryFooterContent}
-      </div>
+      </form>
     )
   }
 }

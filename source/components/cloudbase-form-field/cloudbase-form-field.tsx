@@ -1,6 +1,6 @@
-import { TextFieldTypes } from "../../common/ui-types"
-import React, { ReactNode } from "react"
-import "../../../css/cloudbase-form-field/cloudbase-form-field.css"
+import { TextFieldTypes } from '../../common/ui-types'
+import React, { ReactNode } from 'react'
+import '../../../css/cloudbase-form-field/cloudbase-form-field.css'
 // const {
 // Form, FormCell, CellBody, CellFooter, CellHeader, Label, Button, Input, Select
 // } = require("react-weui")
@@ -44,7 +44,10 @@ function countdown(
   internalCallBack: any,
   finishCallback: any
 ) {
-  if (totalTime === 0) finishCallback()
+  if (totalTime === 0) {
+    finishCallback()
+    return
+  }
 
   const timer = setTimeout(() => {
     internalCallBack()
@@ -72,12 +75,12 @@ export class CloudbaseFormField extends React.Component<
   render() {
     let content = null
     switch (this.props.fieldId) {
-      case "code":
+      case 'code':
         content = (
-          <div className="weui-cell weui-cell_vcode">
-            <div className="weui-cell__bd">
+          <div className='weui-cell weui-cell_vcode'>
+            <div className='weui-cell__bd'>
               <input
-                className="weui-input"
+                className='weui-input'
                 id={this.props.fieldId}
                 onInput={this.props.handleInputChange}
                 placeholder={this.props.placeholder}
@@ -87,13 +90,13 @@ export class CloudbaseFormField extends React.Component<
                 disabled={this.props.disabled}
               />
             </div>
-            <div className="weui-cell__ft">
+            <div className='weui-cell__ft'>
               <a
                 // type="vcode"
                 className={
                   this.state.sendCodeBtnDisabled
-                    ? "isDisabled weui-vcode-btn"
-                    : "btnNormal weui-vcode-btn"
+                    ? 'isDisabled weui-vcode-btn'
+                    : 'btnNormal weui-vcode-btn'
                 }
                 onClick={(event: any) => {
                   event.preventDefault()
@@ -101,7 +104,7 @@ export class CloudbaseFormField extends React.Component<
                     sendCodeBtnDisabled: true
                   })
                   if (this.props.sendCode) {
-                    this.props.sendCode(this.props.value || "")
+                    this.props.sendCode(this.props.value || '')
 
                     // 指定时间内禁用
                     countdown(
@@ -116,7 +119,8 @@ export class CloudbaseFormField extends React.Component<
                       },
                       () => {
                         this.setState({
-                          sendCodeBtnDisabled: false
+                          sendCodeBtnDisabled: false,
+                          sendCodeBtnNumber: this.props.sendCodeIntervalTime
                         })
                       }
                     )
@@ -124,26 +128,26 @@ export class CloudbaseFormField extends React.Component<
                 }}
               >
                 {this.state.sendCodeBtnDisabled
-                  ? `${this.state.sendCodeBtnNumber} s resend`
-                  : "Send"}
+                  ? `${this.state.sendCodeBtnNumber} s 发送`
+                  : '发送'}
               </a>
             </div>
           </div>
         )
         break
-      case "phone_number":
+      case 'phone_number':
         content = (
-          <div className="weui-cell weui-cell_select weui-cell_select-before">
-            <div className="weui-cell__hd">
-              <select className="weui-select">
-                <option value="1">+86</option>
+          <div className='weui-cell weui-cell_select weui-cell_select-before'>
+            <div className='weui-cell__hd'>
+              <select className='weui-select'>
+                <option value='1'>+86</option>
               </select>
             </div>
-            <div className="weui-cell__bd">
+            <div className='weui-cell__bd'>
               <input
-                className="weui-input"
+                className='weui-input'
                 id={this.props.fieldId}
-                type="tell"
+                type='tell'
                 onInput={this.props.handleInputChange}
                 placeholder={this.props.placeholder}
                 name={this.props.name}
@@ -157,17 +161,17 @@ export class CloudbaseFormField extends React.Component<
         break
       default: {
         content = (
-          <div className="weui-cell">
+          <div className='weui-cell'>
             {this.props.label && (
-              <div className="weui-cell__hd">
+              <div className='weui-cell__hd'>
                 <div>
                   <label>{this.props.label}</label>
                 </div>
               </div>
             )}
-            <div className="weui-cell__bd">
+            <div className='weui-cell__bd'>
               <input
-                className="weui-input"
+                className='weui-input'
                 id={this.props.fieldId}
                 type={this.props.type}
                 onInput={this.props.handleInputChange}

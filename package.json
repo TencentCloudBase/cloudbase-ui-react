@@ -1,6 +1,6 @@
 {
   "name": "@cloudbase/ui-react",
-  "version": "0.0.1-beta",
+  "version": "0.0.4-beta",
   "description": "Example repository for a shared React components library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -70,12 +70,12 @@
     "typescript": "3.9.7"
   },
   "dependencies": {
-    "@cloudbase/js-sdk": "^1.5.2-alpha.0",
-    "tslib": "2.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "@cloudbase/js-sdk": "^1.5.3-alpha.0",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "tslib": "2.0.0",
     "weui": "^1.1.0"
   }
 }
