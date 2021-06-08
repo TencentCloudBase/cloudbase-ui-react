@@ -43,6 +43,8 @@ export class CloudbaseSetUsername extends React.Component<
 
   private eventBus = this.props.app.eventBus;
 
+  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
+
   public constructor(props: CloudbaseSetUsernameProps) {
     super(props);
     this.state = {
@@ -81,8 +83,6 @@ export class CloudbaseSetUsername extends React.Component<
       ></CloudbaseFormSection>
     );
   }
-
-  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
 
   private async defaultHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
     // avoid submitting the form

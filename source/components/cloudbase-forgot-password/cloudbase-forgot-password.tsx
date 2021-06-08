@@ -63,6 +63,8 @@ export class CloudbaseForgotPassword extends React.Component<
 
   private eventBus = this.props.app.eventBus;
 
+  private handleAuthStateChange = dispatchAuthStateChangeEvent;
+
   public constructor(props: CloudbaseForgotPasswordProps) {
     super(props);
     this.state = {
@@ -119,8 +121,6 @@ export class CloudbaseForgotPassword extends React.Component<
   private handleSubmit(event: Event) {
     return this.submit(event);
   }
-
-  private handleAuthStateChange = dispatchAuthStateChangeEvent;
 
   private handleSend(app: cloudbase.app.App) {
     // const auth = app.auth({ persistence: 'local' })

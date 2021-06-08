@@ -21,6 +21,8 @@ export class CloudbaseSignOut extends React.Component<CloudbaseSignOutProps> {
 
   private eventBus = this.props.app.eventBus;
 
+  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
+
   public render() {
     return (
       <button
@@ -39,6 +41,4 @@ export class CloudbaseSignOut extends React.Component<CloudbaseSignOutProps> {
 
     await handleSignOut(this.props.app, this.props.userLoginType as LOGINTYPE);
   }
-
-  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
 }

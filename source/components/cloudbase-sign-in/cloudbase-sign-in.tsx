@@ -71,6 +71,8 @@ export class CloudbaseSignIn extends React.Component<
 
   private eventBus = this.props.app.eventBus;
 
+  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
+
   public constructor(props: CloudbaseSignInProps) {
     super(props);
     this.state = {
@@ -179,8 +181,6 @@ export class CloudbaseSignIn extends React.Component<
     }
     return this.signIn();
   }
-
-  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
 
   private handleFormFieldInputChange(fieldType: string): any {
     switch (fieldType) {
