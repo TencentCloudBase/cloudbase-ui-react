@@ -51,33 +51,6 @@ export class CloudbaseAuthenticator extends React.Component<
 
   private loadingTimer: any = null;
 
-  private defaultHandleToastEvent = (params: { data: EVENTITEM }) => {
-    const { data } = params;
-    switch (data.event) {
-      case EVENT_TYPE.TOAST_AUTH_ERROR_EVENT:
-        if (data.message) {
-          this.setState({
-            toastMessage: data.message,
-            toastType: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
-          });
-
-          this.loadingTimer = setTimeout(() => {
-            this.setState({ toastMessage: '' });
-          }, 2000);
-        }
-        break;
-      case EVENT_TYPE.TOAST_SUCCESS_MSG:
-        this.setState({
-          toastMessage: data.message,
-          toastType: EVENT_TYPE.TOAST_SUCCESS_MSG
-        });
-        this.loadingTimer = setTimeout(() => {
-          this.setState({ toastMessage: '' });
-        }, 2000);
-        break;
-    }
-  };
-
   public constructor(props: CloudbaseAuthenticatorProps) {
     super(props);
 
@@ -169,6 +142,33 @@ export class CloudbaseAuthenticator extends React.Component<
       </div>
     );
   }
+
+  private defaultHandleToastEvent = (params: { data: EVENTITEM }) => {
+    const { data } = params;
+    switch (data.event) {
+      case EVENT_TYPE.TOAST_AUTH_ERROR_EVENT:
+        if (data.message) {
+          this.setState({
+            toastMessage: data.message,
+            toastType: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
+          });
+
+          this.loadingTimer = setTimeout(() => {
+            this.setState({ toastMessage: '' });
+          }, 2000);
+        }
+        break;
+      case EVENT_TYPE.TOAST_SUCCESS_MSG:
+        this.setState({
+          toastMessage: data.message,
+          toastType: EVENT_TYPE.TOAST_SUCCESS_MSG
+        });
+        this.loadingTimer = setTimeout(() => {
+          this.setState({ toastMessage: '' });
+        }, 2000);
+        break;
+    }
+  };
 
   private onAuthStateChange(nextAuthState: AuthState, data?: any) {
     if (nextAuthState === undefined) return;
