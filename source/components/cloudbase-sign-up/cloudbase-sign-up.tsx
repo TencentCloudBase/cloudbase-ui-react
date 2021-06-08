@@ -63,7 +63,7 @@ export class CloudbaseSignUp extends React.Component<
   CloudbaseSignUpProps,
   CloudbaseSignUpState
 > {
-  static defaultProps = {
+  private static defaultProps = {
     headerText: Translations.SIGN_UP_HEADER_TEXT,
     submitButtonText: Translations.SIGN_UP_SUBMIT_BUTTON_TEXT,
     haveAccountText: Translations.SIGN_UP_HAVE_ACCOUNT_TEXT,
@@ -72,7 +72,9 @@ export class CloudbaseSignUp extends React.Component<
     userLoginType: LOGINTYPE.PHONE
   };
 
-  constructor(props: CloudbaseSignUpProps) {
+  private eventBus = this.props.app.eventBus;
+
+  public constructor(props: CloudbaseSignUpProps) {
     super(props);
     this.state = {
       newFormFields: [],
@@ -91,7 +93,38 @@ export class CloudbaseSignUp extends React.Component<
     };
   }
 
-  private eventBus = this.props.app.eventBus;
+  public componentDidMount() {
+    checkUserLoginType(this.props.userLoginType);
+    this.buildFormFields();
+  }
+
+  public render() {
+    const handleSubmit = this.props.handleSubmit || this.defaultHandleSubmit;
+    const handleAuthStateChange =
+      this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
+    return (
+      <CloudbaseFormSection
+        headerText={this.props.headerText}
+        handleSubmit={handleSubmit}
+        formFields={this.state.newFormFields}
+        loading={this.state.loading}
+        submitButtonText={this.props.submitButtonText || ''}
+        secondaryFooterContent={
+          <div className='weui-cell weui-cell_link'>
+            {this.props.haveAccountText}{' '}
+            <div
+              className='cell__bd'
+              onClick={() =>
+                handleAuthStateChange(this.eventBus, AuthState.SignIn)
+              }
+            >
+              {this.props.signInText}
+            </div>
+          </div>
+        }
+      ></CloudbaseFormSection>
+    );
+  }
 
   private defaultHandleSubmit = (event: React.FormEvent<HTMLFormElement>) =>
     this.signUp(event);
@@ -178,8 +211,6 @@ export class CloudbaseSignUp extends React.Component<
     fnToCall(event, callback?.bind(this));
   }
 
-  // TODO: Add validation
-  // TODO: Prefix
   private async signUp(event: React.FormEvent<HTMLFormElement>) {
     const app = this.props.app;
     if (event) {
@@ -302,7 +333,7 @@ export class CloudbaseSignUp extends React.Component<
     }
   }
 
-  setFieldValue(
+  private setFieldValue(
     fields: Array<PhoneFormFieldType | FormFieldType>,
     formAttributes: SignUpAttributes
   ) {
@@ -344,38 +375,5 @@ export class CloudbaseSignUp extends React.Component<
       signUpAttributes: newFormAttributes,
       phoneNumber: newPhoneNumber
     });
-  }
-
-  componentDidMount() {
-    checkUserLoginType(this.props.userLoginType);
-    this.buildFormFields();
-  }
-
-  render() {
-    const handleSubmit = this.props.handleSubmit || this.defaultHandleSubmit;
-    const handleAuthStateChange =
-      this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
-    return (
-      <CloudbaseFormSection
-        headerText={this.props.headerText}
-        handleSubmit={handleSubmit}
-        formFields={this.state.newFormFields}
-        loading={this.state.loading}
-        submitButtonText={this.props.submitButtonText || ''}
-        secondaryFooterContent={
-          <div className='weui-cell weui-cell_link'>
-            {this.props.haveAccountText}{' '}
-            <div
-              className='cell__bd'
-              onClick={() =>
-                handleAuthStateChange(this.eventBus, AuthState.SignIn)
-              }
-            >
-              {this.props.signInText}
-            </div>
-          </div>
-        }
-      ></CloudbaseFormSection>
-    );
   }
 }

@@ -34,7 +34,7 @@ interface CloudbaseForgotPasswordProps {
   headerText?: string;
   sendButtonText?: string;
   submitButtonText?: string;
-  formFields: FormFieldTypes;
+  formFields?: FormFieldTypes;
   userLoginType: LOGINTYPE;
   app: cloudbase.app.App;
 }
@@ -53,7 +53,7 @@ export class CloudbaseForgotPassword extends React.Component<
   CloudbaseForgotPasswordProps,
   CloudbaseForgotPasswordState
 > {
-  static defaultProps = {
+  private static defaultProps = {
     headerText: Translations.RESET_YOUR_PASSWORD,
     sendButtonText: Translations.SEND_CODE,
     submitButtonText: Translations.SUBMIT,
@@ -63,7 +63,7 @@ export class CloudbaseForgotPassword extends React.Component<
 
   private eventBus = this.props.app.eventBus;
 
-  constructor(props: CloudbaseForgotPasswordProps) {
+  public constructor(props: CloudbaseForgotPasswordProps) {
     super(props);
     this.state = {
       delivery: null,
@@ -84,16 +84,43 @@ export class CloudbaseForgotPassword extends React.Component<
     };
   }
 
+  public componentDidMount() {
+    checkUserLoginType(this.props.userLoginType);
+    this.buildFormFields();
+  }
+
+  public render() {
+    const submitFn = (event: any) => this.handleSubmit(event);
+
+    const submitButtonText = this.props.submitButtonText;
+    return (
+      <CloudbaseFormSection
+        headerText={this.props.headerText}
+        handleSubmit={submitFn}
+        formFields={this.state.newFormFields}
+        loading={this.state.loading}
+        secondaryFooterContent={
+          <div className='weui-cell weui-cell_link'>
+            <div
+              className='weui-cell__bd'
+              onClick={() =>
+                this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
+              }
+            >
+              {Translations.BACK_TO_SIGN_IN}{' '}
+            </div>
+          </div>
+        }
+        submitButtonText={this.props.submitButtonText || ''}
+      ></CloudbaseFormSection>
+    );
+  }
+
   private handleSubmit(event: Event) {
     return this.submit(event);
   }
 
   private handleAuthStateChange = dispatchAuthStateChangeEvent;
-
-  componentDidMount() {
-    checkUserLoginType(this.props.userLoginType);
-    this.buildFormFields();
-  }
 
   private handleSend(app: cloudbase.app.App) {
     // const auth = app.auth({ persistence: 'local' })
@@ -103,7 +130,7 @@ export class CloudbaseForgotPassword extends React.Component<
   }
 
   private buildFormFields() {
-    const formFields = this.props.formFields;
+    const formFields = this.props.formFields || [];
     if (formFields.length === 0) {
       this.buildDefaultFormFields();
     } else {
@@ -272,7 +299,7 @@ export class CloudbaseForgotPassword extends React.Component<
     }
   }
 
-  setFieldValue(
+  private setFieldValue(
     fields: Array<PhoneFormFieldType | FormFieldType>,
     formAttributes: ForgotPasswordAttributes
   ) {
@@ -365,32 +392,5 @@ export class CloudbaseForgotPassword extends React.Component<
       // this.loading = false
       this.setState({});
     }
-  }
-
-  render() {
-    const submitFn = (event: any) => this.handleSubmit(event);
-
-    const submitButtonText = this.props.submitButtonText;
-    return (
-      <CloudbaseFormSection
-        headerText={this.props.headerText}
-        handleSubmit={submitFn}
-        formFields={this.state.newFormFields}
-        loading={this.state.loading}
-        secondaryFooterContent={
-          <div className='weui-cell weui-cell_link'>
-            <div
-              className='weui-cell__bd'
-              onClick={() =>
-                this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
-              }
-            >
-              {Translations.BACK_TO_SIGN_IN}{' '}
-            </div>
-          </div>
-        }
-        submitButtonText={this.props.submitButtonText || ''}
-      ></CloudbaseFormSection>
-    );
   }
 }

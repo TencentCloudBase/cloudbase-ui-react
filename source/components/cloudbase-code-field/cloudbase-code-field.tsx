@@ -1,27 +1,27 @@
-import { TextFieldTypes } from '../../common/ui-types'
-import React, { ReactNode } from 'react'
-import '../../../css/cloudbase-form-field/cloudbase-form-field.css'
-import { CloudbaseFormFieldBase } from '../cloudbase-form-field-base/cloudbase-form-field-base'
-import { Translations } from '../../common/Translations'
+import { TextFieldTypes } from '../../common/ui-types';
+import React, { ReactNode } from 'react';
+import '../../../css/cloudbase-form-field/cloudbase-form-field.css';
+import { CloudbaseFormFieldBase } from '../cloudbase-form-field-base/cloudbase-form-field-base';
+import { Translations } from '../../common/Translations';
 
 interface CloudbaseCodeFieldProps {
-  fieldId?: string
-  label?: string
-  type?: TextFieldTypes
-  required?: boolean
-  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void
-  placeholder?: string
-  sendCode?: (phoneNumber: string) => Promise<boolean>
-  sendCodeIntervalTime?: number
-  name?: string
-  value?: string
-  inputProps?: object
-  disabled?: boolean
+  fieldId?: string;
+  label?: string;
+  type?: TextFieldTypes;
+  required?: boolean;
+  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  sendCode?: (phoneNumber: string) => Promise<boolean>;
+  sendCodeIntervalTime?: number;
+  name?: string;
+  value?: string;
+  inputProps?: object;
+  disabled?: boolean;
 }
 
 interface CloudbaseCodeFieldState {
-  sendCodeBtnDisabled?: boolean
-  sendCodeBtnNumber?: number
+  sendCodeBtnDisabled?: boolean;
+  sendCodeBtnNumber?: number;
 }
 
 function countdown(
@@ -30,37 +30,37 @@ function countdown(
   finishCallback: any
 ) {
   if (totalTime === 0) {
-    finishCallback()
-    return
+    finishCallback();
+    return;
   }
 
   const timer = setTimeout(() => {
-    internalCallBack()
-    clearTimeout(timer)
-    countdown(--totalTime, internalCallBack, finishCallback)
-  }, 1000)
+    internalCallBack();
+    clearTimeout(timer);
+    countdown(--totalTime, internalCallBack, finishCallback);
+  }, 1000);
 }
 
 export class CloudbaseCodeField extends React.Component<
   CloudbaseCodeFieldProps,
   CloudbaseCodeFieldState
 > {
-  static defaultProps = {
+  private static defaultProps = {
     fieldId: 'code',
     label: '',
     placeholder: Translations.CODE_PLACEHOLDER,
     required: false,
     sendCodeIntervalTime: 10
-  }
-  constructor(props: CloudbaseCodeFieldProps) {
-    super(props)
+  };
+  public constructor(props: CloudbaseCodeFieldProps) {
+    super(props);
     this.state = {
       sendCodeBtnDisabled: false,
       sendCodeBtnNumber: this.props.sendCodeIntervalTime || 60
-    }
+    };
   }
 
-  render() {
+  public render() {
     return (
       <div className='weui-cell weui-cell_vcode'>
         <CloudbaseFormFieldBase
@@ -82,12 +82,12 @@ export class CloudbaseCodeField extends React.Component<
                 : 'btnNormal weui-vcode-btn'
             }
             onClick={(event: any) => {
-              event.preventDefault()
+              event.preventDefault();
               this.setState({
                 sendCodeBtnDisabled: true
-              })
+              });
               if (this.props.sendCode) {
-                this.props.sendCode(this.props.value || '')
+                this.props.sendCode(this.props.value || '');
 
                 // 指定时间内禁用
                 countdown(
@@ -97,16 +97,16 @@ export class CloudbaseCodeField extends React.Component<
                       return {
                         ...prevState,
                         sendCodeBtnNumber: prevState.sendCodeBtnNumber - 1
-                      }
-                    })
+                      };
+                    });
                   },
                   () => {
                     this.setState({
                       sendCodeBtnDisabled: false,
                       sendCodeBtnNumber: this.props.sendCodeIntervalTime
-                    })
+                    });
                   }
-                )
+                );
               }
             }}
           >
@@ -116,6 +116,6 @@ export class CloudbaseCodeField extends React.Component<
           </a>
         </div>
       </div>
-    )
+    );
   }
 }

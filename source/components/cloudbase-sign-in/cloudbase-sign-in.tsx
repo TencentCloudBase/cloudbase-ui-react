@@ -17,26 +17,10 @@ import {
   dispatchAuthStateChangeEvent,
   checkUserLoginType,
   handleSendCode
-  // handlePhoneNumberChange
 } from '../../common/helper';
 import { handleSignIn, checkWXOauthLoginCode } from '../../common/helper';
 import cloudbase from '../../common/cloudbase';
-// const { Button, Cell, CellBody } = require("react-weui")
-// import ReactWEUI from "react-weui"
 
-// const {
-//   Form,
-//   FormCell,
-//   Cell,
-//   CellBody,
-//   CellFooter,
-//   CellHeader,
-//   Label,
-//   Button,
-//   Input,
-//   Select,
-//   Page
-// } = ReactWEUI as any
 interface SignInAttributes {
   userInput: string;
   password?: string;
@@ -71,19 +55,11 @@ interface CloudbaseSignInState {
   username?: string;
 }
 
-// /**
-//  * @slot header-subtitle - Subtitle content placed below header text
-//  * @slot federated-buttons - Content above form fields used for sign in federation buttons
-//  * @slot footer - Content is place in the footer of the component
-//  * @slot primary-footer-content - Content placed on the right side of the footer
-//  * @slot secondary-footer-content - Content placed on the left side of the footer
-//  */
-
 export class CloudbaseSignIn extends React.Component<
   CloudbaseSignInProps,
   CloudbaseSignInState
 > {
-  static defaultProps = {
+  private static defaultProps = {
     headerText: Translations.SIGN_IN_HEADER_TEXT,
     submitButtonText: Translations.SIGN_IN_ACTION,
     formFields: [],
@@ -93,7 +69,9 @@ export class CloudbaseSignIn extends React.Component<
     resetPasswordText: Translations.RESET_PASSWORD_TEXT
   };
 
-  constructor(props: CloudbaseSignInProps) {
+  private eventBus = this.props.app.eventBus;
+
+  public constructor(props: CloudbaseSignInProps) {
     super(props);
     this.state = {
       loading: false,
@@ -112,20 +90,8 @@ export class CloudbaseSignIn extends React.Component<
     };
   }
 
-  private eventBus = this.props.app.eventBus;
-
-  defaultHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    // avoid submitting the form
-    if (event) {
-      event.preventDefault();
-    }
-    return this.signIn();
-  }
-
-  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
-
   // TODO:
-  componentDidMount() {
+  public componentDidMount() {
     checkUserLoginType(this.props.userLoginType);
     this.buildFormFields();
     // 微信授权登录特殊处理
@@ -152,6 +118,69 @@ export class CloudbaseSignIn extends React.Component<
       }
     }
   }
+
+  public render() {
+    const handleSubmit =
+      this.props.handleSubmit || this.defaultHandleSubmit.bind(this);
+    const handleAuthStateChange =
+      this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
+
+    return (
+      <CloudbaseFormSection
+        headerText={this.props.headerText}
+        handleSubmit={handleSubmit}
+        formFields={this.state.newFormFields}
+        loading={this.state.loading}
+        submitButtonText={
+          this.props.userLoginType.indexOf('WECHAT') >= 0
+            ? Translations.WECHAT_OAUTH_LOGIN
+            : this.props.submitButtonText || ''
+        }
+        secondaryFooterContent={
+          !this.props.hideSignUp ? (
+            <div className='weui-flex'>
+              <div className='weui-cell weui-cell_link weui-flex__item'>
+                <div
+                  className='weui-cell__bd'
+                  onClick={() =>
+                    handleAuthStateChange(this.eventBus, AuthState.SignUp)
+                  }
+                >
+                  {this.props.createAccountText}
+                </div>
+              </div>
+              <div className='weui-cell weui-cell_link weui-flex__item'></div>
+              <div className='weui-cell weui-cell_link weui-flex__item'>
+                <div
+                  className='weui-cell__bd'
+                  onClick={() =>
+                    handleAuthStateChange(
+                      this.eventBus,
+                      AuthState.ForgotPassword
+                    )
+                  }
+                >
+                  {this.props.resetPasswordText}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <span></span>
+          )
+        }
+      ></CloudbaseFormSection>
+    );
+  }
+
+  private defaultHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    // avoid submitting the form
+    if (event) {
+      event.preventDefault();
+    }
+    return this.signIn();
+  }
+
+  private defaultHandleAuthStateChange = dispatchAuthStateChangeEvent;
 
   private handleFormFieldInputChange(fieldType: string): any {
     switch (fieldType) {
@@ -281,7 +310,7 @@ export class CloudbaseSignIn extends React.Component<
     };
   }
 
-  buildDefaultFormFields() {
+  private buildDefaultFormFields() {
     const formFieldInputs: any = [];
     const handleAuthStateChange =
       this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
@@ -345,7 +374,7 @@ export class CloudbaseSignIn extends React.Component<
     });
   }
 
-  buildFormFields() {
+  private buildFormFields() {
     const formFields = this.props.formFields || [];
     const handleAuthStateChange =
       this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
@@ -384,7 +413,7 @@ export class CloudbaseSignIn extends React.Component<
     }
   }
 
-  setFieldValue(
+  private setFieldValue(
     fields: Array<PhoneFormFieldType | FormFieldType>,
     formAttributes: SignInAttributes
   ) {
@@ -441,58 +470,5 @@ export class CloudbaseSignIn extends React.Component<
         signInAttributes: newFormAttributes
       };
     });
-  }
-
-  render() {
-    const handleSubmit =
-      this.props.handleSubmit || this.defaultHandleSubmit.bind(this);
-    const handleAuthStateChange =
-      this.props.handleAuthStateChange || this.defaultHandleAuthStateChange;
-
-    return (
-      <CloudbaseFormSection
-        headerText={this.props.headerText}
-        handleSubmit={handleSubmit}
-        formFields={this.state.newFormFields}
-        loading={this.state.loading}
-        submitButtonText={
-          this.props.userLoginType.indexOf('WECHAT') >= 0
-            ? Translations.WECHAT_OAUTH_LOGIN
-            : this.props.submitButtonText || ''
-        }
-        secondaryFooterContent={
-          !this.props.hideSignUp ? (
-            <div className='weui-flex'>
-              <div className='weui-cell weui-cell_link weui-flex__item'>
-                <div
-                  className='weui-cell__bd'
-                  onClick={() =>
-                    handleAuthStateChange(this.eventBus, AuthState.SignUp)
-                  }
-                >
-                  {this.props.createAccountText}
-                </div>
-              </div>
-              <div className='weui-cell weui-cell_link weui-flex__item'></div>
-              <div className='weui-cell weui-cell_link weui-flex__item'>
-                <div
-                  className='weui-cell__bd'
-                  onClick={() =>
-                    handleAuthStateChange(
-                      this.eventBus,
-                      AuthState.ForgotPassword
-                    )
-                  }
-                >
-                  {this.props.resetPasswordText}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <span></span>
-          )
-        }
-      ></CloudbaseFormSection>
-    );
   }
 }

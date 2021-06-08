@@ -1,27 +1,27 @@
-import { TextFieldTypes } from '../../common/ui-types'
-import React, { ReactNode } from 'react'
-import '../../../css/cloudbase-form-field/cloudbase-form-field.css'
+import { TextFieldTypes } from '../../common/ui-types';
+import React, { ReactNode } from 'react';
+import '../../../css/cloudbase-form-field/cloudbase-form-field.css';
 
 interface CloudbaseFormFieldBaseProps {
-  fieldId?: string
-  label?: string
-  description?: string | null
-  type?: TextFieldTypes
-  required?: boolean
-  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void
-  placeholder?: string
-  name?: string
-  value?: string
-  inputProps?: object
-  disabled?: boolean
+  fieldId?: string;
+  label?: string;
+  description?: string | null;
+  type?: TextFieldTypes;
+  required?: boolean;
+  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  name?: string;
+  value?: string;
+  inputProps?: object;
+  disabled?: boolean;
 }
 
 export class CloudbaseFormFieldBase extends React.Component<CloudbaseFormFieldBaseProps> {
-  constructor(props: CloudbaseFormFieldBaseProps) {
-    super(props)
+  public constructor(props: CloudbaseFormFieldBaseProps) {
+    super(props);
   }
 
-  render() {
+  public render() {
     return (
       <div className='weui-cell__bd'>
         <input
@@ -37,6 +37,6 @@ export class CloudbaseFormFieldBase extends React.Component<CloudbaseFormFieldBa
           disabled={this.props.disabled}
         />
       </div>
-    )
+    );
   }
 }

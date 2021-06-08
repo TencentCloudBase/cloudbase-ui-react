@@ -1,34 +1,34 @@
-import { TextFieldTypes } from '../../common/ui-types'
-import React, { ReactNode } from 'react'
-import '../../../css/cloudbase-form-field/cloudbase-form-field.css'
-import { CloudbaseFormFieldBase } from '../cloudbase-form-field-base/cloudbase-form-field-base'
-import { Translations } from '../../common/Translations'
+import { TextFieldTypes } from '../../common/ui-types';
+import React, { ReactNode } from 'react';
+import '../../../css/cloudbase-form-field/cloudbase-form-field.css';
+import { CloudbaseFormFieldBase } from '../cloudbase-form-field-base/cloudbase-form-field-base';
+import { Translations } from '../../common/Translations';
 
 interface CloudbaseEmailFieldProps {
-  fieldId?: string
-  label?: string
-  type?: TextFieldTypes
-  required?: boolean
-  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void
-  placeholder?: string
-  name?: string
-  value?: string
-  inputProps?: object
-  disabled?: boolean
+  fieldId?: string;
+  label?: string;
+  type?: TextFieldTypes;
+  required?: boolean;
+  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  name?: string;
+  value?: string;
+  inputProps?: object;
+  disabled?: boolean;
 }
 
 export class CloudbaseEmailField extends React.Component<CloudbaseEmailFieldProps> {
-  static defaultProps = {
+  private static defaultProps = {
     fieldId: 'email',
     label: '',
     placeholder: Translations.EMAIL_PLACEHOLDER,
     required: false
-  }
-  constructor(props: CloudbaseEmailFieldProps) {
-    super(props)
+  };
+  public constructor(props: CloudbaseEmailFieldProps) {
+    super(props);
   }
 
-  render() {
+  public render() {
     return (
       <div className='weui-cell'>
         {this.props.label && (
@@ -49,6 +49,6 @@ export class CloudbaseEmailField extends React.Component<CloudbaseEmailFieldProp
           type={this.props.type}
         ></CloudbaseFormFieldBase>
       </div>
-    )
+    );
   }
 }

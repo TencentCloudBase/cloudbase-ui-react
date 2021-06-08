@@ -1,42 +1,27 @@
-import { TextFieldTypes } from '../../common/ui-types'
-import React, { ReactNode } from 'react'
-import '../../../css/cloudbase-form-field/cloudbase-form-field.css'
-// const {
-// Form, FormCell, CellBody, CellFooter, CellHeader, Label, Button, Input, Select
-// } = require("react-weui")
-// import ReactWEUI from "react-weui"
-// const {
-//   Form,
-//   FormCell,
-//   CellBody,
-//   CellFooter,
-//   CellHeader,
-//   Label,
-//   Button,
-//   Input,
-//   Select
-// } = ReactWEUI as any
+import { TextFieldTypes } from '../../common/ui-types';
+import React, { ReactNode } from 'react';
+import '../../../css/cloudbase-form-field/cloudbase-form-field.css';
 
 interface CloudbaseFormFieldProps {
-  fieldId?: string
-  label?: string
-  description?: string | null
-  hint?: string | ReactNode | null
-  type?: TextFieldTypes
-  required?: boolean
-  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void
-  sendCode?: (phoneNumber: string) => Promise<boolean>
-  sendCodeIntervalTime?: number
-  placeholder?: string
-  name?: string
-  value?: string
-  inputProps?: object
-  disabled?: boolean
+  fieldId?: string;
+  label?: string;
+  description?: string | null;
+  hint?: string | ReactNode | null;
+  type?: TextFieldTypes;
+  required?: boolean;
+  handleInputChange?: (inputEvent: React.FormEvent<HTMLInputElement>) => void;
+  sendCode?: (phoneNumber: string) => Promise<boolean>;
+  sendCodeIntervalTime?: number;
+  placeholder?: string;
+  name?: string;
+  value?: string;
+  inputProps?: object;
+  disabled?: boolean;
 }
 
 interface CloudbaseFormFieldState {
-  sendCodeBtnDisabled?: boolean
-  sendCodeBtnNumber?: number
+  sendCodeBtnDisabled?: boolean;
+  sendCodeBtnNumber?: number;
 }
 
 function countdown(
@@ -45,35 +30,35 @@ function countdown(
   finishCallback: any
 ) {
   if (totalTime === 0) {
-    finishCallback()
-    return
+    finishCallback();
+    return;
   }
 
   const timer = setTimeout(() => {
-    internalCallBack()
-    clearTimeout(timer)
-    countdown(--totalTime, internalCallBack, finishCallback)
-  }, 1000)
+    internalCallBack();
+    clearTimeout(timer);
+    countdown(--totalTime, internalCallBack, finishCallback);
+  }, 1000);
 }
 
 export class CloudbaseFormField extends React.Component<
   CloudbaseFormFieldProps,
   CloudbaseFormFieldState
 > {
-  static defaultProps = {
+  private static defaultProps = {
     sendCodeIntervalTime: 10
-  }
+  };
 
-  constructor(props: CloudbaseFormFieldProps) {
-    super(props)
+  public constructor(props: CloudbaseFormFieldProps) {
+    super(props);
     this.state = {
       sendCodeBtnDisabled: false,
       sendCodeBtnNumber: this.props.sendCodeIntervalTime || 60
-    }
+    };
   }
 
-  render() {
-    let content = null
+  public render() {
+    let content = null;
     switch (this.props.fieldId) {
       case 'code':
         content = (
@@ -99,12 +84,12 @@ export class CloudbaseFormField extends React.Component<
                     : 'btnNormal weui-vcode-btn'
                 }
                 onClick={(event: any) => {
-                  event.preventDefault()
+                  event.preventDefault();
                   this.setState({
                     sendCodeBtnDisabled: true
-                  })
+                  });
                   if (this.props.sendCode) {
-                    this.props.sendCode(this.props.value || '')
+                    this.props.sendCode(this.props.value || '');
 
                     // 指定时间内禁用
                     countdown(
@@ -114,16 +99,16 @@ export class CloudbaseFormField extends React.Component<
                           return {
                             ...prevState,
                             sendCodeBtnNumber: prevState.sendCodeBtnNumber - 1
-                          }
-                        })
+                          };
+                        });
                       },
                       () => {
                         this.setState({
                           sendCodeBtnDisabled: false,
                           sendCodeBtnNumber: this.props.sendCodeIntervalTime
-                        })
+                        });
                       }
-                    )
+                    );
                   }
                 }}
               >
@@ -133,8 +118,8 @@ export class CloudbaseFormField extends React.Component<
               </a>
             </div>
           </div>
-        )
-        break
+        );
+        break;
       case 'phone_number':
         content = (
           <div className='weui-cell weui-cell_select weui-cell_select-before'>
@@ -157,8 +142,8 @@ export class CloudbaseFormField extends React.Component<
               />
             </div>
           </div>
-        )
-        break
+        );
+        break;
       default: {
         content = (
           <div className='weui-cell'>
@@ -183,11 +168,11 @@ export class CloudbaseFormField extends React.Component<
               />
             </div>
           </div>
-        )
-        break
+        );
+        break;
       }
     }
 
-    return content
+    return content;
   }
 }
