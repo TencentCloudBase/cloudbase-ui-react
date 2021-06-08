@@ -4,9 +4,7 @@ import cloudbase from './cloudbase'
 
 export const onAuthUIStateChange = (app: cloudbase.app.App, authStateHandler: AuthStateHandler) => {
     const authUIStateHandler = (data: any) => {
-        console.log('data', data)
         const { data: payload } = data
-        console.log('payload', payload)
         switch (payload.event) {
             case AUTH_STATE_CHANGE_EVENT:
                 if (payload.message) {
