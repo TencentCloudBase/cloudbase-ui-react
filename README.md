@@ -27,7 +27,8 @@ import {
   CloudbaseSignOut, // 登出组件
   CloudbaseSignIn, // 登录组件
   CloudbaseSetUsername, // 更新用户名组件
-  CloudbaseForgotPassword, // 重置密码组件
+  CloudbaseForgotPassword, // 忘记密码组件
+  CloudbaseResetPassword, // 重置密码组件
   CloudbaseSignUp // 注册组件
 } from '@cloudbase/ui-react';
 import cloudbase from '@cloudbase/js-sdk';
@@ -84,7 +85,8 @@ export default App;
 | handleToastEvent  | function                                            | 否   | 错误处理函数，可由开发者自定义                                                                                                                    |
 | signIn            | [CloudbaseSignIn](#CloudbaseSignIn)                 | 否   | 登录子组件                                                                                                                                        |
 | signUp            | [CloudbaseSignUp](#CloudbaseSignUp)                 | 否   | 注册子组件                                                                                                                                        |
-| forgotPassword    | [CloudbaseForgotPassword](#CloudbaseForgotPassword) | 否   | 重置密码子组件                                                                                                                                    |
+| forgotPassword    | [CloudbaseForgotPassword](#CloudbaseForgotPassword) | 否   | 忘记密码子组件                                                                                                                                    |
+| resetPassword     | [CloudbaseResetPassword](#CloudbaseResetPassword)   | 否   | 重置密码子组件                                                                                                                                    |
 
 ##### 登录类型 LOGINTYPE
 
@@ -104,6 +106,7 @@ export default App;
 | SignedIn       | string | 已登录，基于此状态判断登录完成 |
 | SignUp         | string | 注册                           |
 | ForgotPassword | string | 重置密码                       |
+| ResetPassword  | string | 重置密码                       |
 | SignedOut      | string | 已登出                         |
 
 ### 自定义 CSS
@@ -120,9 +123,6 @@ export default App;
 
 #### 用法
 
-:::: tabs
-::: tab JavaScript
-
 ```javascript
 <CloudbaseAuthenticator
   userLoginType={LOGINTYPE.PHONE}
@@ -136,9 +136,6 @@ export default App;
   }
 />
 ```
-
-:::
-::::
 
 #### 属性
 
@@ -231,9 +228,6 @@ export default App;
 
 #### 用法
 
-:::: tabs
-::: tab JavaScript
-
 ```javascript
 <CloudbaseAuthenticator
   userLoginType={LOGINTYPE.PHONE}
@@ -247,9 +241,6 @@ export default App;
   }
 />
 ```
-
-:::
-::::
 
 #### 属性
 
@@ -306,21 +297,78 @@ export default App;
 
 ### CloudbaseForgotPassword
 
+忘记密码组件
+
+![](https://main.qcloudimg.com/raw/6c741c08ab1b50b37e0a8bd3e1df8f3d.png)
+
+> ⚠️ CloudbaseForgotPassword 组件暂只支持邮箱登录场景。
+
+#### 用法
+
+```javascript
+<CloudbaseAuthenticator
+  userLoginType={LOGINTYPE.EMAIL}
+  app={app}
+  forgotPassword={
+    <CloudbaseForgotPassword
+      app={app}
+      userLoginType={LOGINTYPE.EMAIL}
+      submitButtonText={'忘记密码按钮文案'}
+    />
+  }
+/>
+```
+
+#### 属性
+
+| 字段             | 类型                                          | 必填 | 说明                                                  |
+| ---------------- | --------------------------------------------- | ---- | ----------------------------------------------------- |
+| headerText       | string                                        | 否   | 忘记密码框头部文案                                    |
+| submitButtonText | string                                        | 否   | 按钮文案                                              |
+| userLoginType    | string                                        | 是   | 登录类型， 参考 [LOGINTYPE](#LOGINTYPE)，暂只支持邮箱 |
+| formFields       | Array&lt;[FormFieldType](#FormFieldType) &gt; | 否   | 自定义表单项输入框                                    |
+| app              | Cloudbase                                     | 是   | cloudbase 实例                                        |
+
+#### 自定义 formFields
+
+```javascript
+<CloudbaseAuthenticator
+  userLoginType={LOGINTYPE.EMAIL}
+  app={app}
+  forgotPassword={
+    <CloudbaseForgotPassword
+      app={app}
+      userLoginType={LOGINTYPE.EMAIL}
+      submitButtonText={'忘记密码按钮文案'}
+      formFields={[
+        {
+          type: 'email',
+          required: true,
+          placeholder: '请输入邮箱',
+          inputProps: {
+            maxlength: 11
+          }
+        }
+      ]}
+    />
+  }
+/>
+```
+
+### CloudbaseResetPassword
+
 重置密码组件
 
 ![](https://main.qcloudimg.com/raw/0bc43253081303284946482f13aa4b56.png)
 
 #### 用法
 
-:::: tabs
-::: tab JavaScript
-
 ```javascript
 <CloudbaseAuthenticator
   userLoginType={LOGINTYPE.PHONE}
   app={app}
-  forgotPassword={
-    <CloudbaseForgotPassword
+  resetPassword={
+    <CloudbaseResetPassword
       app={app}
       userLoginType={LOGINTYPE.PHONE}
       submitButtonText={'重置密码按钮文案'}
@@ -328,9 +376,6 @@ export default App;
   }
 />
 ```
-
-:::
-::::
 
 #### 属性
 
@@ -349,8 +394,8 @@ export default App;
 <CloudbaseAuthenticator
   userLoginType={LOGINTYPE.PHONE}
   app={app}
-  signUp={
-    <CloudbaseForgotPassword
+  resetPassword={
+    <CloudbaseResetPassword
       app={app}
       userLoginType={LOGINTYPE.PHONE}
       submitButtonText={'重置按钮文案'}

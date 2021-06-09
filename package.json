@@ -1,12 +1,12 @@
 {
   "name": "@cloudbase/ui-react",
   "version": "0.0.7-beta",
-  "description": "Example repository for a shared React components library",
+  "description": "TencentCloudBase React UI Components",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:rpearce/example-component-library.git"
+    "url": "git@github.com:TencentCloudBase/cloudbase-ui-react.git"
   },
   "author": "lukejyhuang",
   "license": "BSD-3",

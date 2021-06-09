@@ -49,7 +49,7 @@ export class CloudbaseForgotPassword extends React.Component<
   CloudbaseForgotPasswordState
 > {
   private static defaultProps = {
-    headerText: Translations.RESET_YOUR_PASSWORD,
+    headerText: Translations.FORGOT_PASSWORD_TEXT,
     sendButtonText: Translations.SEND_CODE,
     submitButtonText: Translations.SUBMIT,
     formFields: [],

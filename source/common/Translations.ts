@@ -5,7 +5,7 @@ export enum AuthStrings {
     CREATE_ACCOUNT_TEXT = '创建账户',
     WECHAT_OAUTH_LOGIN = '微信授权登录',
     EMAIL_PLACEHOLDER = '输入邮箱地址',
-    FORGOT_PASSWORD_TEXT = '忘记密码?',
+    FORGOT_PASSWORD_TEXT = '忘记密码',
     USERNAME_REMOVE_WHITESPACE = 'Username cannot contain whitespace',
     PASSWORD_REMOVE_WHITESPACE = 'Password cannot start or end with whitespace',
 
