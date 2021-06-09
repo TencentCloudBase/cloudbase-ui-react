@@ -158,7 +158,7 @@ export class CloudbaseSignIn extends React.Component<
                   onClick={() =>
                     handleAuthStateChange(
                       this.eventBus,
-                      AuthState.ForgotPassword
+                      AuthState.ResetPassword
                     )
                   }
                 >
