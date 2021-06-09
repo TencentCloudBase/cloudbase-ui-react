@@ -140,12 +140,22 @@ interface IForgotPassword {
     loginType: LOGINTYPE
     handleAuthStateChange: AuthStateHandler
     username: string
+    newPassword: string
+    code: string
+}
+
+interface IResetPassword {
+    app: cloudbase.app.App
+    loginType: LOGINTYPE
+    handleAuthStateChange: AuthStateHandler
+    username: string
     oldPassword: string
     newPassword: string
     code: string
 }
 
-export const handleForgotPassword = async (params: IForgotPassword) => {
+
+export const handleResetPassword = async (params: IResetPassword) => {
     const { app, loginType, handleAuthStateChange, username, oldPassword, newPassword, code } = params
     const eventBus = (app as any).eventBus
     const auth = app.auth({ persistence: 'local' })
@@ -199,6 +209,52 @@ export const handleForgotPassword = async (params: IForgotPassword) => {
     }
 };
 
+export const handleForgotPassword = async (params: IForgotPassword) => {
+    const { app, loginType, handleAuthStateChange, username, newPassword, code } = params
+    const eventBus = (app as any).eventBus
+    const auth = app.auth({ persistence: 'local' })
+    try {
+        switch (loginType) {
+            case LOGINTYPE.PHONE: {
+
+                console.log("can't support now")
+
+                // let reqParams: any = {
+                //     phoneNumber: username,
+                //     phoneCode: code,
+                // }
+                // await auth.signInWithPhoneCodeOrPassword({
+                //     ...reqParams
+                // })
+            }; break
+            case LOGINTYPE.EMAIL: {
+                await auth.sendPasswordResetEmail(username)
+            }; break
+
+            default: break
+        }
+
+        // 跳转至 SignIn
+
+        dispatchToastHubEvent((app as any).eventBus, {
+            message: '发送重置邮件成功',
+            type: EVENT_TYPE.TOAST_SUCCESS_MSG
+        })
+
+        dispatchAuthStateChangeEvent(
+            (app as any).eventBus,
+            AuthState.SignIn
+        )
+    } catch (error) {
+        console.log('error****', error)
+        dispatchToastHubEvent(eventBus, {
+            code: error.code,
+            message: error.message,
+            type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT,
+        });
+    }
+};
+
 export const handleSignUp = async (app: cloudbase.app.App, loginType: LOGINTYPE, handleAuthStateChange: AuthStateHandler, username: string, password: string, code: string) => {
     const eventBus = (app as any).eventBus
     const auth = app.auth({ persistence: 'local' })
@@ -215,10 +271,17 @@ export const handleSignUp = async (app: cloudbase.app.App, loginType: LOGINTYPE,
 
         // 检查是否输入用户名，是则设置用户名
         // 跳转至登录页
-        dispatchToastHubEvent((app as any).eventBus, {
-            message: '注册成功',
-            type: EVENT_TYPE.TOAST_SUCCESS_MSG
-        })
+        if (loginType === LOGINTYPE.EMAIL) {
+            dispatchToastHubEvent((app as any).eventBus, {
+                message: '发送注册邮件成功',
+                type: EVENT_TYPE.TOAST_SUCCESS_MSG
+            })
+        } else {
+            dispatchToastHubEvent((app as any).eventBus, {
+                message: '注册成功',
+                type: EVENT_TYPE.TOAST_SUCCESS_MSG
+            })
+        }
         dispatchAuthStateChangeEvent((app as any).eventBus, AuthState.SignIn)
     } catch (e) {
         dispatchToastHubEvent(eventBus, {

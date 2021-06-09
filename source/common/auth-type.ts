@@ -80,6 +80,12 @@ export type CodeDeliveryType = 'SMS';
 
 export interface ForgotPasswordAttributes {
     userInput: string;
+    newPassword: string;
+    code: string;
+}
+
+export interface ResetPasswordAttributes {
+    userInput: string;
     oldPassword: string;
     newPassword: string;
     code: string;

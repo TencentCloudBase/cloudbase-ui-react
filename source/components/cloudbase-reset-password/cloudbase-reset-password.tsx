@@ -5,7 +5,8 @@ import {
   FormFieldType,
   PhoneNumberInterface,
   PhoneFormFieldType,
-  ForgotPasswordAttributes
+  CodeDeliveryType,
+  ResetPasswordAttributes
 } from '../../common/auth-type';
 import {
   AuthState,
@@ -23,44 +24,49 @@ import {
   dispatchToastHubEvent,
   dispatchAuthStateChangeEvent,
   checkUserLoginType,
-  handleForgotPassword,
+  handleResetPassword,
   handleSendCode
+  // handlePhoneNumberChange
 } from '../../common/helper';
+import { stringify } from 'querystring';
 
-interface CloudbaseForgotPasswordProps {
+interface CloudbaseResetPasswordProps {
   headerText?: string;
   sendButtonText?: string;
   submitButtonText?: string;
   formFields?: FormFieldTypes;
   userLoginType: LOGINTYPE;
+  forgotPasswordText?: string;
   app: cloudbase.app.App;
 }
 
-interface CloudbaseForgotPasswordState {
+interface CloudbaseResetPasswordState {
   loading: boolean;
   phoneNumber: PhoneNumberInterface;
   newFormFields: FormFieldTypes;
-  forgotPasswordAttrs: ForgotPasswordAttributes;
+  resetPasswordAttrs: ResetPasswordAttributes;
   email: string;
+  username: string;
 }
 
-export class CloudbaseForgotPassword extends React.Component<
-  CloudbaseForgotPasswordProps,
-  CloudbaseForgotPasswordState
+export class CloudbaseResetPassword extends React.Component<
+  CloudbaseResetPasswordProps,
+  CloudbaseResetPasswordState
 > {
   private static defaultProps = {
     headerText: Translations.RESET_YOUR_PASSWORD,
     sendButtonText: Translations.SEND_CODE,
     submitButtonText: Translations.SUBMIT,
+    forgotPasswordText: Translations.FORGOT_PASSWORD_TEXT,
     formFields: [],
-    userLoginType: LOGINTYPE.EMAIL // 支持重置的登录方式，目前仅支持邮箱，手机号
+    userLoginType: LOGINTYPE.USERNAME
   };
 
   private eventBus = this.props.app.eventBus;
 
   private handleAuthStateChange = dispatchAuthStateChangeEvent;
 
-  public constructor(props: CloudbaseForgotPasswordProps) {
+  public constructor(props: CloudbaseResetPasswordProps) {
     super(props);
     this.state = {
       loading: false,
@@ -69,9 +75,11 @@ export class CloudbaseForgotPassword extends React.Component<
         phoneNumberValue: null
       },
       email: '',
+      username: '',
       newFormFields: [],
-      forgotPasswordAttrs: {
+      resetPasswordAttrs: {
         userInput: '',
+        oldPassword: '',
         newPassword: '',
         code: ''
       }
@@ -94,15 +102,35 @@ export class CloudbaseForgotPassword extends React.Component<
         formFields={this.state.newFormFields}
         loading={this.state.loading}
         secondaryFooterContent={
-          <div className='weui-cell weui-cell_link'>
-            <div
-              className='weui-cell__bd'
-              onClick={() =>
-                this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
-              }
-            >
-              {Translations.BACK_TO_SIGN_IN}{' '}
+          <div className='weui-flex'>
+            <div className='weui-cell weui-cell_link weui-flex__item'>
+              <div
+                className='weui-cell__bd'
+                onClick={() =>
+                  this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
+                }
+              >
+                {Translations.BACK_TO_SIGN_IN}{' '}
+              </div>
             </div>
+            <div className='weui-cell weui-cell_link weui-flex__item'></div>
+            {this.props.userLoginType === LOGINTYPE.EMAIL ? (
+              <div className='weui-cell weui-cell_link weui-flex__item'>
+                <div
+                  className='weui-cell__bd'
+                  onClick={() =>
+                    this.handleAuthStateChange(
+                      this.eventBus,
+                      AuthState.ForgotPassword
+                    )
+                  }
+                >
+                  {this.props.forgotPasswordText}
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
         }
         submitButtonText={this.props.submitButtonText || ''}
@@ -133,7 +161,7 @@ export class CloudbaseForgotPassword extends React.Component<
           this.handleFormFieldInputWithCallback(event, field);
         newFields.push(newField);
       });
-      this.setFieldValue(newFields, this.state.forgotPasswordAttrs);
+      this.setFieldValue(newFields, this.state.resetPasswordAttrs);
 
       this.setState({
         newFormFields: newFields
@@ -144,6 +172,13 @@ export class CloudbaseForgotPassword extends React.Component<
   private buildDefaultFormFields() {
     let newFormFields: any = [];
     const defaultFields = [
+      {
+        type: 'oldPassword',
+        fieldId: 'oldPassword',
+        placeholder: Translations.OLD_PASSWORD_PLACEHOLDER,
+        required: true,
+        handleInputChange: this.handleFormFieldInputChange('oldPassword')
+      },
       {
         type: 'newPassword',
         fieldId: 'newPassword',
@@ -181,7 +216,18 @@ export class CloudbaseForgotPassword extends React.Component<
             placeholder: Translations.EMAIL_PLACEHOLDER,
             handleInputChange: this.handleFormFieldInputChange('email')
           }
-        ];
+        ].concat(defaultFields);
+        break;
+      case LOGINTYPE.USERNAME:
+        newFormFields = [
+          {
+            fieldId: 'username',
+            type: 'username',
+            required: true,
+            placeholder: Translations.USERNAME_PLACEHOLDER,
+            handleInputChange: this.handleFormFieldInputChange('username')
+          }
+        ].concat(defaultFields);
         break;
       default:
         break;
@@ -200,8 +246,8 @@ export class CloudbaseForgotPassword extends React.Component<
           this.setState((prevState) => {
             return {
               ...prevState,
-              forgotPasswordAttrs: {
-                ...prevState.forgotPasswordAttrs,
+              resetPasswordAttrs: {
+                ...prevState.resetPasswordAttrs,
                 userInput: value
               },
               phoneNumber: {
@@ -217,8 +263,8 @@ export class CloudbaseForgotPassword extends React.Component<
           this.setState((prevState) => {
             return {
               ...prevState,
-              forgotPasswordAttrs: {
-                ...prevState.forgotPasswordAttrs,
+              resetPasswordAttrs: {
+                ...prevState.resetPasswordAttrs,
                 userInput: value
               },
               email: value
@@ -226,6 +272,19 @@ export class CloudbaseForgotPassword extends React.Component<
           });
         };
       // handlePhoneNumberChange(event, this.phoneNumber)
+      case 'oldPassword':
+        return (event: any) => {
+          const value = event.target.value;
+          this.setState((prevstate) => {
+            return {
+              ...prevstate,
+              resetPasswordAttrs: {
+                ...prevstate.resetPasswordAttrs,
+                oldPassword: value
+              }
+            };
+          });
+        };
       case 'newPassword':
         return (event: any) => {
           const value = event.target.value;
@@ -233,13 +292,14 @@ export class CloudbaseForgotPassword extends React.Component<
           this.setState((prevstate) => {
             return {
               ...prevstate,
-              forgotPasswordAttrs: {
-                ...prevstate.forgotPasswordAttrs,
+              resetPasswordAttrs: {
+                ...prevstate.resetPasswordAttrs,
                 newPassword: value
               }
             };
           });
         };
+      // (this.forgotPasswordAttrs[fieldType] = event.target.value)
       case 'code':
         return (event: any) => {
           const value = event.target.value;
@@ -247,8 +307,8 @@ export class CloudbaseForgotPassword extends React.Component<
           this.setState((prevState) => {
             return {
               ...prevState,
-              forgotPasswordAttrs: {
-                ...prevState.forgotPasswordAttrs,
+              resetPasswordAttrs: {
+                ...prevState.resetPasswordAttrs,
                 code: value
               }
             };
@@ -261,12 +321,13 @@ export class CloudbaseForgotPassword extends React.Component<
 
   private setFieldValue(
     fields: Array<PhoneFormFieldType | FormFieldType>,
-    formAttributes: ForgotPasswordAttributes
+    formAttributes: ResetPasswordAttributes
   ) {
     let newFormAttributes: any = {};
     const newPhoneNumber: any = {};
     for (let field of fields) {
       switch (field.type) {
+        case 'username':
         case 'email':
           if (field.value === undefined) {
             newFormAttributes.userInput = '';
@@ -280,6 +341,7 @@ export class CloudbaseForgotPassword extends React.Component<
           }
           newPhoneNumber.phoneNumberValue = field.value;
           break;
+        case 'oldPassword':
         case 'newPassword':
         case 'code':
           if (field.value === undefined) {
@@ -323,20 +385,22 @@ export class CloudbaseForgotPassword extends React.Component<
       event.preventDefault();
     }
 
-    const username = this.state.forgotPasswordAttrs.userInput.trim();
+    const username = this.state.resetPasswordAttrs.userInput.trim();
 
+    // this.loading = true
     this.setState({
       loading: true
     });
 
     try {
-      await handleForgotPassword({
+      await handleResetPassword({
         app: this.props.app,
         loginType: this.props.userLoginType,
         handleAuthStateChange: this.handleAuthStateChange,
         username,
-        newPassword: this.state.forgotPasswordAttrs.newPassword || '',
-        code: this.state.forgotPasswordAttrs.code || ''
+        oldPassword: this.state.resetPasswordAttrs.oldPassword || '',
+        newPassword: this.state.resetPasswordAttrs.newPassword || '',
+        code: this.state.resetPasswordAttrs.code || ''
       });
     } catch (error) {
       dispatchToastHubEvent(this.eventBus, {

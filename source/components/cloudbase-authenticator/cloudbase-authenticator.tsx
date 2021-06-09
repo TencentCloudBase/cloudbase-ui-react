@@ -14,6 +14,7 @@ import {
 import { UI_AUTH_CHANNEL } from '../../common/constant';
 import cloudbase from '../../common/cloudbase';
 import { CloudbaseForgotPassword } from '../cloudbase-forgot-password/cloudbase-forgot-password';
+import { CloudbaseResetPassword } from '../cloudbase-reset-password/cloudbase-reset-password';
 import { CloudbaseSignIn } from '../cloudbase-sign-in/cloudbase-sign-in';
 import { CloudbaseSignUp } from '../cloudbase-sign-up/cloudbase-sign-up';
 
@@ -27,6 +28,7 @@ export interface CloudbaseAuthenticatorProps {
   signIn?: React.ReactElement;
   signUp?: React.ReactElement;
   forgotPassword?: React.ReactElement;
+  resetPassword?: React.ReactElement;
   oauthConfig?: OAuthConfig;
 }
 
@@ -219,8 +221,15 @@ export class CloudbaseAuthenticator extends React.Component<
             app={this.props.app}
           />
         );
-      // case AuthState.ResetPassword:
-      //   return <CloudbaseRequireNewPassword user={this.authData} />
+      case AuthState.ResetPassword:
+        return this.props.resetPassword ? (
+          this.props.resetPassword
+        ) : (
+          <CloudbaseResetPassword
+            userLoginType={this.props.userLoginType}
+            app={this.props.app}
+          />
+        );
       case AuthState.Loading:
         return <div>Loading...</div>;
       default:
