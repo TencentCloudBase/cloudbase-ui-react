@@ -1,6 +1,6 @@
 {
   "name": "@cloudbase/ui-react",
-  "version": "0.0.6-beta",
+  "version": "0.0.7-beta",
   "description": "Example repository for a shared React components library",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
