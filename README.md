@@ -511,3 +511,12 @@ export default App;
 | ----------------- | --------- | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | app               | Cloudbase | 是   | 完成 init 的 Cloudbase 实例                                                                                                                     |
 | handleStateChange | Function  | 是   | 自定义状态处理回调函数，接收 2 个参数，参数 1 authState 表示监听到的 UI 状态，参数 2 authData 表示推送的 数据，若完成登录，则推送当前 user 信息 |
+
+## 在线示例
+
+<iframe src="https://codesandbox.io/embed/elegant-ganguly-59l0g?fontsize=14&hidenavigation=1&theme=dark"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="elegant-ganguly-59l0g"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+   ></iframe>
