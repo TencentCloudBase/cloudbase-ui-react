@@ -290,6 +290,7 @@ export const handleSignUp = async (app: cloudbase.app.App, loginType: LOGINTYPE,
             type: EVENT_TYPE.TOAST_AUTH_ERROR_EVENT
         });
     }
+
 }
 
 export function removeParam(key: string, sourceURL: string) {
