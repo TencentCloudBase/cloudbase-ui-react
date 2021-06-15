@@ -68,12 +68,18 @@
     "ts-jest": "26.1.4",
     "ts-loader": "8.0.2",
     "typescript": "3.9.7",
-    "tslib": "2.0.0"
+    "tslib": "2.0.0",
+    "husky": "^3.1.0"
   },
   "dependencies": {
     "weui": "^1.1.0"
   },
   "peerDependencies": {
     "react": "^17.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run build && git add ."
+    }
   }
 }
