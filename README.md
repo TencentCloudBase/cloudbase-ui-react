@@ -514,9 +514,4 @@ export default App;
 
 ## 在线示例
 
-<iframe src="https://codesandbox.io/embed/elegant-ganguly-59l0g?fontsize=14&hidenavigation=1&theme=dark"
-     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
-     title="elegant-ganguly-59l0g"
-     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-   > </iframe>
+[![Edit elegant-ganguly-59l0g](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/elegant-ganguly-59l0g?fontsize=14&hidenavigation=1&theme=dark)
