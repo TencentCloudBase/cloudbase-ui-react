@@ -318,7 +318,7 @@ export const handleSignOut = async (app: cloudbase.app.App, loginType: LOGINTYPE
     // 判断是否为微信授权登录后退出，是则重置url query
     try {
         await auth.signOut()
-        if (loginType.indexOf('WECHAT') > -1) {
+        if (loginType && loginType.indexOf('WECHAT') > -1) {
             const currUrl = removeParam('code', location.href);
             location.href = currUrl
         }
