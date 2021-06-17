@@ -13,6 +13,7 @@ export * from './common/ui-types';
 export * from './common/auth-type';
 export { Translations } from './common/Translations';
 export { onAuthUIStateChange } from './common/helper';
+export { createAuthHooks } from './hooks/authHook';
 export {
   UI_AUTH_CHANNEL,
   TOAST_AUTH_ERROR_EVENT,
