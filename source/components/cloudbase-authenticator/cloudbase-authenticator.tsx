@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   LOGINTYPE,
-  AuthState,
+  AUTHSTATE,
   AuthStateHandler,
   EVENT_TYPE,
   EVENTITEM,
@@ -19,7 +19,7 @@ import { CloudbaseSignIn } from '../cloudbase-sign-in/cloudbase-sign-in';
 import { CloudbaseSignUp } from '../cloudbase-sign-up/cloudbase-sign-up';
 
 export interface CloudbaseAuthenticatorProps {
-  initialLoginState?: AuthState.SignIn | AuthState.SignUp;
+  initialLoginState?: AUTHSTATE.SIGNIN | AUTHSTATE.SIGNUP;
   userLoginType: LOGINTYPE;
   isUsePassword?: boolean;
   handleAuthStateChange?: AuthStateHandler;
@@ -33,7 +33,7 @@ export interface CloudbaseAuthenticatorProps {
 }
 
 export interface CloudbaseAuthenticatorState {
-  authState: AuthState;
+  authState: AUTHSTATE;
   authData: any; // loginState, user,
   toastMessage: string;
   toastType: string;
@@ -45,7 +45,7 @@ export class CloudbaseAuthenticator extends React.Component<
   CloudbaseAuthenticatorState
 > {
   private static defaultProps = {
-    initialLoginState: AuthState.SignIn
+    initialLoginState: AUTHSTATE.SIGNIN
   };
 
   private eventBus = this.props.app.eventBus;
@@ -58,7 +58,7 @@ export class CloudbaseAuthenticator extends React.Component<
 
     this.toastEle = React.createRef();
     this.state = {
-      authState: AuthState.Loading,
+      authState: AUTHSTATE.LOADING,
       authData: {},
       toastMessage: '',
       toastType: '',
@@ -84,13 +84,13 @@ export class CloudbaseAuthenticator extends React.Component<
         const user = auth.currentUser;
         dispatchAuthStateChangeEvent(
           (app as any).eventBus,
-          AuthState.SignedIn,
+          AUTHSTATE.SIGNEDIN,
           user
         );
       } else {
         dispatchAuthStateChangeEvent(
           (app as any).eventBus,
-          this.props.initialLoginState || AuthState.SignIn
+          this.props.initialLoginState || AUTHSTATE.SIGNIN
         );
       }
     }, 0);
@@ -134,7 +134,7 @@ export class CloudbaseAuthenticator extends React.Component<
             <p className='weui-toast__content'>{this.state.toastMessage}</p>
           </div>
         </div>
-        {this.state.authState === AuthState.SignedIn ? (
+        {this.state.authState === AUTHSTATE.SIGNEDIN ? (
           <div></div>
         ) : (
           <div className='auth-container'>
@@ -172,24 +172,24 @@ export class CloudbaseAuthenticator extends React.Component<
     }
   };
 
-  private onAuthStateChange(nextAuthState: AuthState, data?: any) {
+  private onAuthStateChange(nextAuthState: AUTHSTATE, data?: any) {
     if (nextAuthState === undefined) return;
 
     this.setState({
       authState:
-        nextAuthState === AuthState.SignedOut
+        nextAuthState === AUTHSTATE.SIGNEDOUT
           ? this.props.initialLoginState ||
             CloudbaseAuthenticator.defaultProps.initialLoginState
           : nextAuthState,
-      // authState: AuthState.SignIn,
+      // authState: AUTHSTATE.SIGNIN,
       authData: data
     });
   }
 
   // Returns the auth component corresponding to the given authState.
-  private getAuthComponent(authState: AuthState): React.ReactElement {
+  private getAuthComponent(authState: AUTHSTATE): React.ReactElement {
     switch (authState) {
-      case AuthState.SignIn:
+      case AUTHSTATE.SIGNIN:
         return this.props.signIn ? (
           this.props.signIn
         ) : (
@@ -203,7 +203,7 @@ export class CloudbaseAuthenticator extends React.Component<
             }
           />
         );
-      case AuthState.SignUp:
+      case AUTHSTATE.SIGNUP:
         return this.props.signUp ? (
           this.props.signUp
         ) : (
@@ -212,7 +212,7 @@ export class CloudbaseAuthenticator extends React.Component<
             app={this.props.app}
           />
         );
-      case AuthState.ForgotPassword:
+      case AUTHSTATE.FORGOTPASSWORD:
         return this.props.forgotPassword ? (
           this.props.forgotPassword
         ) : (
@@ -221,7 +221,7 @@ export class CloudbaseAuthenticator extends React.Component<
             app={this.props.app}
           />
         );
-      case AuthState.ResetPassword:
+      case AUTHSTATE.RESETPASSWORD:
         return this.props.resetPassword ? (
           this.props.resetPassword
         ) : (
@@ -230,7 +230,7 @@ export class CloudbaseAuthenticator extends React.Component<
             app={this.props.app}
           />
         );
-      case AuthState.Loading:
+      case AUTHSTATE.LOADING:
         return <div>Loading...</div>;
       default:
         throw new Error(`Unhandled auth state: ${authState}`);
@@ -239,7 +239,7 @@ export class CloudbaseAuthenticator extends React.Component<
 
   // Returns a slot containing the Auth component corresponding to the given authState
   private getAuthComponentFromChildren(
-    authState: AuthState
+    authState: AUTHSTATE
   ): React.ReactElement {
     let authComponent = this.getAuthComponent(authState);
 
@@ -249,7 +249,7 @@ export class CloudbaseAuthenticator extends React.Component<
     // 获取当前 authState 对应组件
     if (childrenElement) {
       switch (authState) {
-        case AuthState.SignIn:
+        case AUTHSTATE.SIGNIN:
           authComponent = childrenElement.find(
             (item: any) => item.type === 'CloudbaseSignIn'
           );

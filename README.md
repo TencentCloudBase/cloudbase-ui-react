@@ -22,7 +22,7 @@ import React from 'react';
 import {
   CloudbaseAuthenticator,
   onAuthUIStateChange,
-  AuthState,
+  AUTHSTATE,
   LOGINTYPE,
   CloudbaseSignOut, // 登出组件
   CloudbaseSignIn, // 登录组件
@@ -38,7 +38,7 @@ const app = cloudbase.init({
 });
 
 function App() {
-  const [authState, setAuthState] = React.useState(AuthState.SignIn);
+  const [authState, setAuthState] = React.useState(AUTHSTATE.SIGNIN);
   const [user, setUser] = React.useState({});
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ function App() {
     });
   }, []);
 
-  return authState === AuthState.SignedIn && user ? (
+  return authState === AUTHSTATE.SIGNEDIN && user ? (
     <div className='App'>
       <header className='App-header'>
         Hello, {user.uid}
@@ -80,7 +80,7 @@ export default App;
 | ----------------- | --------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | userLoginType     | string                                              | 是   | 登录类型， 参考 [LOGINTYPE](#LOGINTYPE)，使用登录功能前，需前往[腾讯云 CloudBase 控制台](https://console.cloud.tencent.com/tcb)开启对应登录开关。 |
 | app               | Cloudbase                                           | 是   | cloudbase 实例                                                                                                                                    |
-| initialLoginState | string                                              | 否   | 组件初始状态，AuthState.SignIn or AuthState.SignUp，默认为 AuthState.SignIn，参考[AuthState](#AuthState)                                          |
+| initialLoginState | string                                              | 否   | 组件初始状态，AUTHSTATE.SIGNIN or AUTHSTATE.SIGNUP，默认为 AUTHSTATE.SIGNIN，参考[AUTHSTATE](#AUTHSTATE)                                          |
 | isUsePassword     | boolean                                             | 否   | 仅在短信登录生效，true 为 密码登录模式，false 为验证码登录模式                                                                                    |
 | handleToastEvent  | function                                            | 否   | 错误处理函数，可由开发者自定义                                                                                                                    |
 | signIn            | [CloudbaseSignIn](#CloudbaseSignIn)                 | 否   | 登录子组件                                                                                                                                        |
@@ -98,16 +98,16 @@ export default App;
 | USERNAME      | string | 用户名密码登录     |
 | PHONE         | string | 手机号登录         |
 
-##### 登录界面态 AuthState
+##### 登录界面态 AUTHSTATE
 
 | 字段值         | 类型   | 说明                           |
 | -------------- | ------ | ------------------------------ |
-| SignIn         | string | 登录                           |
-| SignedIn       | string | 已登录，基于此状态判断登录完成 |
-| SignUp         | string | 注册                           |
-| ForgotPassword | string | 重置密码                       |
-| ResetPassword  | string | 重置密码                       |
-| SignedOut      | string | 已登出                         |
+| SIGNIN         | string | 登录                           |
+| SIGNEDIN       | string | 已登录，基于此状态判断登录完成 |
+| SIGNUP         | string | 注册                           |
+| FORGOTPASSWORD | string | 重置密码                       |
+| RESETPASSWORD  | string | 重置密码                       |
+| SIGNEDOUT      | string | 已登出                         |
 
 ### 自定义 CSS
 

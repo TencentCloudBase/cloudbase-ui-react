@@ -1,6 +1,6 @@
 import cloudbase from '../common/cloudbase'
 import { useState, useEffect } from 'react'
-import { AuthState } from '../common/auth-type'
+import { AUTHSTATE } from '../common/auth-type'
 import {
     onAuthUIStateChange,
 } from '../common/helper';
@@ -13,7 +13,7 @@ export class AuthHooks {
     }
 
     useAuthData() {
-        const [authState, setAuthState] = useState(AuthState.SignIn);
+        const [authState, setAuthState] = useState(AUTHSTATE.SIGNIN);
         const [user, setUser] = useState({});
 
         useEffect(() => {

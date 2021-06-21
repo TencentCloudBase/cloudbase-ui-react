@@ -8,7 +8,7 @@ import {
   ForgotPasswordAttributes
 } from '../../common/auth-type';
 import {
-  AuthState,
+  AUTHSTATE,
   AuthStateHandler,
   UsernameAliasStrings,
   LOGINTYPE,
@@ -98,7 +98,7 @@ export class CloudbaseForgotPassword extends React.Component<
             <div
               className='weui-cell__bd'
               onClick={() =>
-                this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
+                this.handleAuthStateChange(this.eventBus, AUTHSTATE.SIGNIN)
               }
             >
               {Translations.BACK_TO_SIGN_IN}{' '}

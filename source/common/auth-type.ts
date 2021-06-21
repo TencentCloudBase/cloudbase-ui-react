@@ -12,21 +12,17 @@ export enum LOGINTYPE {
     PHONE = 'PHONE'
 }
 
-export enum AuthState {
-    SignUp = 'signup',
-    SignOut = 'signout',
-    SignIn = 'signin',
-    Loading = 'loading',
-    SignedOut = 'signedout',
-    SignedIn = 'signedin',
-    SigningUp = 'signingup',
-    ConfirmSignUp = 'confirmSignUp',
-    ConfirmSignIn = 'confirmSignIn',
-    ForgotPassword = 'forgotpassword',
-    ResetPassword = 'resettingpassword'
+export enum AUTHSTATE {
+    SIGNUP = 'signup',
+    SIGNIN = 'signin',
+    LOADING = 'loading',
+    SIGNEDOUT = 'signedout',
+    SIGNEDIN = 'signedin',
+    FORGOTPASSWORD = 'forgotpassword',
+    RESETPASSWORD = 'resettingpassword'
 }
 
-export type AuthStateHandler = (nextAuthState: AuthState, data?: any) => void;
+export type AuthStateHandler = (nextAuthState: AUTHSTATE, data?: any) => void;
 
 export const EVENT_TYPE = {
     TOAST_AUTH_ERROR_EVENT: 'ToastAuthError',

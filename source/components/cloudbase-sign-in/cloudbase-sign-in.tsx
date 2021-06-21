@@ -8,7 +8,7 @@ import {
   LOGINTYPE,
   OAuthConfig
 } from '../../common/auth-type';
-import { AuthState, AuthStateHandler } from '../../common/auth-type';
+import { AUTHSTATE, AuthStateHandler } from '../../common/auth-type';
 import { Translations } from '../../common/Translations';
 import { COUNTRY_DIAL_CODE_DEFAULT } from '../../common/constant';
 import { CloudbaseFormSection } from '../cloudbase-form-section/cloudbase-form-section';
@@ -145,7 +145,7 @@ export class CloudbaseSignIn extends React.Component<
                 <div
                   className='weui-cell__bd'
                   onClick={() =>
-                    handleAuthStateChange(this.eventBus, AuthState.SignUp)
+                    handleAuthStateChange(this.eventBus, AUTHSTATE.SIGNUP)
                   }
                 >
                   {this.props.createAccountText}
@@ -158,7 +158,7 @@ export class CloudbaseSignIn extends React.Component<
                   onClick={() =>
                     handleAuthStateChange(
                       this.eventBus,
-                      AuthState.ResetPassword
+                      AUTHSTATE.RESETPASSWORD
                     )
                   }
                 >
@@ -392,7 +392,7 @@ export class CloudbaseSignIn extends React.Component<
               <button
                 className='weui-btn weui-btn_primary'
                 onClick={() =>
-                  handleAuthStateChange(this.eventBus, AuthState.ForgotPassword)
+                  handleAuthStateChange(this.eventBus, AUTHSTATE.FORGOTPASSWORD)
                 }
               >
                 {Translations.RESET_PASSWORD_TEXT}

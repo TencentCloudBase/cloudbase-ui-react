@@ -1,4 +1,4 @@
-import { AuthStateHandler, AuthState, LOGINTYPE, OAuthConfig, EVENT_TYPE } from './auth-type'
+import { AuthStateHandler, AUTHSTATE, LOGINTYPE, OAuthConfig, EVENT_TYPE } from './auth-type'
 import { AUTH_STATE_CHANGE_EVENT, UI_AUTH_CHANNEL, TOAST_AUTH_ERROR_EVENT } from './constant'
 import cloudbase from './cloudbase'
 
@@ -8,14 +8,14 @@ export const onAuthUIStateChange = (app: cloudbase.app.App, authStateHandler: Au
         switch (payload.event) {
             case AUTH_STATE_CHANGE_EVENT:
                 if (payload.message) {
-                    if (payload.message === AuthState.SignedIn) {
+                    if (payload.message === AUTHSTATE.SIGNEDIN) {
                         try {
                             const user = app.auth({ persistence: 'local' }).currentUser // TODO: use config
-                            authStateHandler(payload.message as AuthState, user)
+                            authStateHandler(payload.message as AUTHSTATE, user)
                         } catch (e) {
                         }
                     } else {
-                        authStateHandler(payload.message as AuthState, payload.data)
+                        authStateHandler(payload.message as AUTHSTATE, payload.data)
                     }
                 }
                 break
@@ -41,7 +41,7 @@ export const dispatchToastHubEvent = (eventBus: any, eventItem: ToastEvent) => {
     });
 };
 
-export const dispatchAuthStateChangeEvent = (eventBus: any, nextAuthState: AuthState, data?: object | null) => {
+export const dispatchAuthStateChangeEvent = (eventBus: any, nextAuthState: AUTHSTATE, data?: object | null) => {
     eventBus.fire(UI_AUTH_CHANNEL, {
         event: AUTH_STATE_CHANGE_EVENT,
         message: nextAuthState,
@@ -120,7 +120,7 @@ export const handleSignIn = async (params: ISignInParams) => {
 
             dispatchAuthStateChangeEvent(
                 (app as any).eventBus,
-                AuthState.SignedIn,
+                AUTHSTATE.SIGNEDIN,
                 user
             )
         }
@@ -195,7 +195,7 @@ export const handleResetPassword = async (params: IResetPassword) => {
 
             dispatchAuthStateChangeEvent(
                 (app as any).eventBus,
-                AuthState.SignIn,
+                AUTHSTATE.SIGNIN,
                 user
             )
         }
@@ -234,7 +234,7 @@ export const handleForgotPassword = async (params: IForgotPassword) => {
             default: break
         }
 
-        // 跳转至 SignIn
+        // 跳转至 SIGNIN
 
         dispatchToastHubEvent((app as any).eventBus, {
             message: '发送重置邮件成功',
@@ -243,7 +243,7 @@ export const handleForgotPassword = async (params: IForgotPassword) => {
 
         dispatchAuthStateChangeEvent(
             (app as any).eventBus,
-            AuthState.SignIn
+            AUTHSTATE.SIGNIN
         )
     } catch (error) {
         console.log('error****', error)
@@ -282,7 +282,7 @@ export const handleSignUp = async (app: cloudbase.app.App, loginType: LOGINTYPE,
                 type: EVENT_TYPE.TOAST_SUCCESS_MSG
             })
         }
-        dispatchAuthStateChangeEvent((app as any).eventBus, AuthState.SignIn)
+        dispatchAuthStateChangeEvent((app as any).eventBus, AUTHSTATE.SIGNIN)
     } catch (e) {
         dispatchToastHubEvent(eventBus, {
             code: e.code,
@@ -323,7 +323,7 @@ export const handleSignOut = async (app: cloudbase.app.App, loginType: LOGINTYPE
             location.href = currUrl
         }
         dispatchAuthStateChangeEvent((app as any).eventBus,
-            AuthState.SignedOut)
+            AUTHSTATE.SIGNEDOUT)
 
     } catch (e) {
         dispatchToastHubEvent(eventBus, {

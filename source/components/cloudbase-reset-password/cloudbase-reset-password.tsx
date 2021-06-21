@@ -9,7 +9,7 @@ import {
   ResetPasswordAttributes
 } from '../../common/auth-type';
 import {
-  AuthState,
+  AUTHSTATE,
   AuthStateHandler,
   UsernameAliasStrings,
   LOGINTYPE,
@@ -107,7 +107,7 @@ export class CloudbaseResetPassword extends React.Component<
               <div
                 className='weui-cell__bd'
                 onClick={() =>
-                  this.handleAuthStateChange(this.eventBus, AuthState.SignIn)
+                  this.handleAuthStateChange(this.eventBus, AUTHSTATE.SIGNIN)
                 }
               >
                 {Translations.BACK_TO_SIGN_IN}{' '}
@@ -121,7 +121,7 @@ export class CloudbaseResetPassword extends React.Component<
                   onClick={() =>
                     this.handleAuthStateChange(
                       this.eventBus,
-                      AuthState.ForgotPassword
+                      AUTHSTATE.FORGOTPASSWORD
                     )
                   }
                 >

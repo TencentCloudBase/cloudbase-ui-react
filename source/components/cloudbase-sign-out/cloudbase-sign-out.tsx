@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthState, AuthStateHandler, LOGINTYPE } from '../../common/auth-type';
+import { AUTHSTATE, AuthStateHandler, LOGINTYPE } from '../../common/auth-type';
 import {
   dispatchAuthStateChangeEvent,
   handleSignOut
