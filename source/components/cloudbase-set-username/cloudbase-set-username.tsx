@@ -6,7 +6,7 @@ import {
   LOGINTYPE,
   EVENT_TYPE
 } from '../../common/auth-type';
-import { AuthState, AuthStateHandler } from '../../common/auth-type';
+import { AUTHSTATE, AuthStateHandler } from '../../common/auth-type';
 import { Translations } from '../../common/Translations';
 import { CloudbaseFormSection } from '../cloudbase-form-section/cloudbase-form-section';
 

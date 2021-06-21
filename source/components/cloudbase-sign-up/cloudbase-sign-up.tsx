@@ -11,7 +11,7 @@ import {
 } from '../../common/auth-type';
 import { COUNTRY_DIAL_CODE_DEFAULT } from '../../common/constant';
 import {
-  AuthState,
+  AUTHSTATE,
   AuthStateHandler,
   UsernameAliasStrings
 } from '../../common/auth-type';
@@ -117,7 +117,7 @@ export class CloudbaseSignUp extends React.Component<
             <div
               className='cell__bd'
               onClick={() =>
-                handleAuthStateChange(this.eventBus, AuthState.SignIn)
+                handleAuthStateChange(this.eventBus, AUTHSTATE.SIGNIN)
               }
             >
               {this.props.signInText}
