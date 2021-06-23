@@ -1,5 +1,5 @@
 export enum AuthStrings {
-    BACK_TO_SIGN_IN = '返回登陆',
+    BACK_TO_SIGN_IN = '返回登录',
     CODE_PLACEHOLDER = '输入验证码',
     PHONENUMBER_PLACEHOLDER = '输入手机号',
     CREATE_ACCOUNT_TEXT = '创建账户',
@@ -18,8 +18,8 @@ export enum AuthStrings {
     SUBMIT = '提交',
     SIGN_IN_ACTION = '登录',
     UPDATE_USERNAME_ACTION = '更新',
-    SIGN_IN_HEADER_TEXT = '登陆账户',
-    SIGN_IN_TEXT = '登陆',
+    SIGN_IN_HEADER_TEXT = '登录账户',
+    SIGN_IN_TEXT = '登录',
     SIGN_OUT = '退出',
     SIGN_UP_HAVE_ACCOUNT_TEXT = '已有账户?',
     SIGN_UP_HEADER_TEXT = '创建账户',
